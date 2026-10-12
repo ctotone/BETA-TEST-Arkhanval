@@ -1,0 +1,812 @@
+<div class="arkhanval-item-sheet__body ark-item-layout ark-item-layout--{{item.type}}{{#if sidebarRuleItem}} ark-item-layout--rules-sidebar{{/if}}{{#if equipmentRulesSidebarOpen}} ark-item-layout--rules-open{{/if}}">
+  {{#if advancedItemSidebar}}<div class="ark-item-advanced-main">{{/if}}
+  {{#if typeFlags.weapon}}
+    <section class="arkhanval-item-core arkhanval-item-core--weapon ark-item-primary ark-item-primary--weapon">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt=""
+          {{#if editable}}data-weapon-image-picker title="Changer l’icône de l’arme"{{/if}}>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name"><span>Nom</span><input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}></label>
+        <div class="ark-item-primary__row">
+          <label><span>{{localize "ARKHANVAL.ItemSheet.Damage"}}</span><input type="text" name="system.damage" value="{{system.damage}}" {{#unless editable}}disabled{{/unless}}></label>
+          <label><span>{{localize "ARKHANVAL.ItemSheet.ArmorPenetration"}}</span><input type="number" min="0" name="system.armorPenetration" value="{{system.armorPenetration}}" {{#unless editable}}disabled{{/unless}}></label>
+        </div>
+        <div class="ark-item-primary__row">
+          <label><span>{{localize "ARKHANVAL.ItemSheet.Price"}}</span><input type="text" name="system.price" value="{{system.price}}" {{#unless editable}}disabled{{/unless}}></label>
+          <label><span>{{localize "ARKHANVAL.ItemSheet.Fabrication"}}</span><input type="text" name="system.fabrication" value="{{system.fabrication}}" {{#unless editable}}disabled{{/unless}}></label>
+        </div>
+        {{#if showWeaponRangeFields}}
+          <div class="ark-item-primary__row">
+            <label><span>{{localize "ARKHANVAL.ItemSheet.StandardRange"}}</span><input type="text" name="system.standardRange" value="{{system.standardRange}}" {{#unless editable}}disabled{{/unless}}></label>
+            <label><span>{{localize "ARKHANVAL.ItemSheet.LongRange"}}</span><input type="text" name="system.longRange" value="{{system.longRange}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+        {{/if}}
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+  {{else if typeFlags.armor}}
+    <section class="arkhanval-item-core arkhanval-item-core--armor ark-item-primary ark-item-primary--armor">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt="" {{#if editable}}data-item-image-picker title="Changer l’icône de l’armure"{{/if}}>
+        <label class="ark-item-primary__check arkhanval-item-tags__choice">
+          <input class="arkhanval-item-tags__native-check" type="checkbox" name="system.equipped" {{#if system.equipped}}checked{{/if}} {{#unless editable}}disabled{{/unless}}>
+          <span class="arkhanval-item-tags__check" aria-hidden="true"></span><span class="arkhanval-item-tags__choice-label">Équipé</span>
+        </label>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name"><span>Nom</span><input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}></label>
+        <div class="ark-item-primary__row arkhanval-item-core__secondary--armor">
+          <label><span>{{localize "ARKHANVAL.ItemSheet.ProtectionBase"}}</span><input type="number" min="0" name="system.protection.base" value="{{system.protection.base}}" {{#unless editable}}disabled{{/unless}}></label>
+          <label><span>{{localize "ARKHANVAL.ItemSheet.ProtectionCurrent"}}</span><input type="number" min="0" name="system.protection.current" value="{{system.protection.current}}" {{#unless editable}}disabled{{/unless}}></label>
+        </div>
+      </div>
+      <div class="ark-item-armor-types">
+        <strong>Type d’armure</strong>
+        {{#each armorTypeOptions as |tag|}}
+          <label class="arkhanval-item-tags__choice">
+            <input class="arkhanval-item-tags__native-check" type="checkbox" data-system-tag="{{tag.id}}" {{#if tag.checked}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}>
+            <span class="arkhanval-item-tags__check" aria-hidden="true"></span><span class="arkhanval-item-tags__choice-label">{{tag.label}}</span>
+          </label>
+        {{/each}}
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+    {{else if showStandardItemCore}}
+    {{!-- En-tête et progression regroupés dans un panneau compact. --}}
+    <section class="arkhanval-item-core arkhanval-item-core--simple ark-item-primary ark-item-primary--{{item.type}}">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt=""
+          {{#if editable}}data-item-image-picker title="{{itemImageTitle}}"{{/if}}>
+        {{#if typeFlags.book}}
+          <label class="ark-item-primary__check arkhanval-item-tags__choice">
+            <input class="arkhanval-item-tags__native-check" type="checkbox" name="system.reading.completed"
+              {{#if system.reading.completed}}checked{{/if}} {{#unless editable}}disabled{{/unless}}>
+            <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+            <span class="arkhanval-item-tags__choice-label">Lecture terminée</span>
+          </label>
+        {{else if typeFlags.work}}
+          <label class="ark-item-primary__check arkhanval-item-tags__choice">
+            <input class="arkhanval-item-tags__native-check" type="checkbox" data-work-completed
+              {{#if workCompleted}}checked{{/if}} {{#unless editable}}disabled{{/unless}}>
+            <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+            <span class="arkhanval-item-tags__choice-label">Tâche terminée</span>
+          </label>
+        {{/if}}
+      </div>
+      <div class="arkhanval-item-core__fields ark-item-primary__fields">
+        <label class="ark-item-primary__name">
+          <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+        </label>
+        {{#if typeFlags.book}}
+          <div class="ark-item-primary__row ark-item-primary__row--book">
+            <label><span>{{localize "ARKHANVAL.ItemSheet.Author"}}</span>
+              <input type="text" name="system.author" value="{{system.author}}" {{#unless editable}}disabled{{/unless}}></label>
+            <label><span>{{localize "ARKHANVAL.ItemSheet.ReadingFD"}}</span>
+              <input type="number" min="0" name="system.reading.fd" value="{{system.reading.fd}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+          <div class="ark-item-primary__row">
+            <label><span>{{localize "ARKHANVAL.ItemSheet.ReadingProgress"}}</span>
+              <input type="number" min="0" name="system.reading.progress" value="{{system.reading.progress}}" {{#unless editable}}disabled{{/unless}}></label>
+            <label><span>{{localize "ARKHANVAL.ItemSheet.ReadingRequired"}}</span>
+              <input type="number" min="0" name="system.reading.required" value="{{system.reading.required}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+        {{else if typeFlags.work}}
+          <div class="ark-item-primary__row ark-item-primary__row--work">
+            <label><span>{{localize "ARKHANVAL.ItemSheet.WorkSkill"}}</span>
+              <select name="system.skillIdentifier" {{#unless editable}}disabled{{/unless}}>
+                {{#each workSkillOptions as |option|}}
+                  <option value="{{option.identifier}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                {{/each}}
+              </select></label>
+            <label><span>{{localize "ARKHANVAL.ItemSheet.WorkFD"}}</span>
+              <input type="number" min="0" name="system.fd" value="{{system.fd}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+          <div class="ark-item-primary__row">
+            <label><span>{{localize "ARKHANVAL.ItemSheet.WorkProgressCurrent"}}</span>
+              <input type="number" min="0" name="system.progress.current" value="{{system.progress.current}}" {{#unless editable}}disabled{{/unless}}></label>
+            <label><span>{{localize "ARKHANVAL.ItemSheet.WorkProgressTarget"}}</span>
+              <input type="number" min="0" name="system.progress.target" value="{{system.progress.target}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+        {{else if typeFlags.equipment}}
+          <div class="ark-item-primary__row">
+            <label><span>{{localize "ARKHANVAL.ItemSheet.Quantity"}}</span>
+              <input type="number" min="0" name="system.quantity" value="{{system.quantity}}" {{#unless editable}}disabled{{/unless}}></label>
+            <label><span>{{localize "ARKHANVAL.ItemSheet.Price"}}</span>
+              <input type="text" name="system.price" value="{{system.price}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+        {{/if}}
+      </div>
+      {{#if typeFlags.equipment}}
+        {{#if declaredRules.length}}
+          <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+            <strong>Effets mécaniques renseignés</strong>
+            <ul>
+              {{#each declaredRules as |rule|}}
+                <li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>
+              {{/each}}
+            </ul>
+          </section>
+        {{/if}}
+      {{/if}}
+    </section>
+    {{#if typeFlags.book}}{{#if system.reading.completed}}
+      <p class="ark-item-reading-notice">La lecture est terminée. Le Maître du jeu va t’indiquer ce que cette lecture t’a apporté.</p>
+    {{/if}}{{/if}}
+  {{else if typeFlags.trait}}
+    <section class="arkhanval-item-core ark-item-primary ark-item-primary--trait">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt="" {{#if editable}}data-item-image-picker title="{{itemImageTitle}}"{{/if}}>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name"><span>Nom</span><input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}></label>
+        <div class="ark-item-primary__row">
+          <label><span>{{localize "ARKHANVAL.ItemSheet.TraitOrigin"}}</span>
+            <select name="system.origin" {{#unless editable}}disabled{{/unless}}>
+              {{#each traitOriginOptions as |option|}}<option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}
+            </select>
+          </label>
+          <label><span>Tirage du résultat</span>
+            <input type="text" data-trait-range value="{{traitRange}}" placeholder="ex. 1-3" {{#unless editable}}disabled{{/unless}}>
+            <input type="hidden" name="system.sourceKey" value="{{system.sourceKey}}">
+          </label>
+        </div>
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+  {{else if typeFlags.spell}}
+    <section class="arkhanval-item-core ark-item-primary ark-item-primary--spell">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{spellImage}}" alt="" {{#if editable}}data-item-image-picker title="Changer l’icône du sortilège"{{/if}}>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name"><span>Nom</span><input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.SpellFields.RequiredSkill"}}</span><select name="system.castingSkill" {{#unless editable}}disabled{{/unless}}>{{#each castingSkillOptions as |option|}}<option value="{{option.identifier}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+      </div>
+      <div class="ark-item-spell-types">
+        <strong>Type de magie</strong>
+        {{#each tagOptions as |tag|}}
+          <label class="arkhanval-item-tags__choice">
+            <input class="arkhanval-item-tags__native-check" type="checkbox" data-system-tag="{{tag.id}}" {{#if tag.checked}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}>
+            <span class="arkhanval-item-tags__check" aria-hidden="true"></span><span class="arkhanval-item-tags__choice-label">{{tag.magicLabel}}</span>
+          </label>
+        {{/each}}
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+    <section class="arkhanval-item-sheet__section ark-item-spell-details">
+      <div class="ark-item-spell-details__grid">
+        <label><span>Statut d’acquisition</span><select name="system.acquisitionStatus" {{#unless editable}}disabled{{/unless}}>{{#each acquisitionStatusOptions as |option|}}<option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+        <label><span>{{localize "ARKHANVAL.Magic.LearningXp"}}</span><input type="number" min="0" name="system.learningXp" value="{{system.learningXp}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.Magic.LearningTarget"}}</span><input type="number" min="0" name="system.learningTarget" value="{{system.learningTarget}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.MagicPoints"}}</span><input type="number" min="0" name="system.magicPoints" value="{{system.magicPoints}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.FD"}}</span><input type="number" min="0" name="system.fd" value="{{system.fd}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Range"}}</span><input type="text" name="system.range" value="{{system.range}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Area"}}</span><input type="text" name="system.area" value="{{system.area}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Duration"}}</span><input type="text" name="system.duration" value="{{system.duration}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.CastingCadence"}}</span><input type="text" name="system.castingCadence" value="{{system.castingCadence}}" {{#unless editable}}disabled{{/unless}}></label>
+      </div>
+    </section>
+  {{else if typeFlags.skill}}
+    <section class="arkhanval-item-core arkhanval-item-core--catalog ark-item-primary ark-item-primary--skill">
+      <div class="ark-item-primary__visual">
+        <img
+          class="arkhanval-item-core__image"
+          src="{{archetypeLinkedImage}}"
+          alt=""
+          {{#if editable}}data-item-image-picker title="Changer l’icône de la compétence"{{/if}}
+        >
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name">
+          <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+        </label>
+        <div class="ark-item-primary__row ark-item-primary__row--skill">
+          <label>
+            <span>{{localize "ARKHANVAL.ItemSheet.Archetype"}}</span>
+            <select name="system.archetype" {{#unless editable}}disabled{{/unless}}>
+              {{#each archetypeOptions as |option|}}
+                <option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+              {{/each}}
+            </select>
+          </label>
+          <label>
+            <span>{{localize "ARKHANVAL.ItemSheet.Rank"}}</span>
+            <input type="number" min="0" name="system.rank" value="{{system.rank}}" {{#unless editable}}disabled{{/unless}}>
+          </label>
+          <label>
+            <span>{{localize "ARKHANVAL.ItemSheet.XP"}}</span>
+            <input type="number" min="0" name="system.xp" value="{{system.xp}}" {{#unless editable}}disabled{{/unless}}>
+          </label>
+        </div>
+      </div>
+    </section>
+  {{else if typeFlags.specialty}}
+    <section class="arkhanval-item-core arkhanval-item-core--catalog arkhanval-item-core--specialty ark-item-primary ark-item-primary--specialty">
+      <div class="ark-item-primary__visual">
+        <img
+          class="arkhanval-item-core__image"
+          src="{{archetypeLinkedImage}}"
+          alt=""
+          {{#if editable}}data-item-image-picker title="Changer l’icône de la spécialité"{{/if}}
+        >
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name">
+          <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+        </label>
+        <div class="ark-item-primary__row ark-item-primary__row--specialty">
+          <label>
+            <span>{{localize "ARKHANVAL.ItemSheet.Archetype"}}</span>
+            <select name="system.archetype" {{#unless editable}}disabled{{/unless}}>
+              {{#each archetypeOptions as |option|}}
+                <option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+              {{/each}}
+            </select>
+          </label>
+          <label class="arkhanval-item-tags__choice arkhanval-item-sheet__choice--inline ark-item-specialty-repeatable">
+            <input class="arkhanval-item-tags__native-check" type="checkbox" name="system.repeatable" {{#if system.repeatable}}checked{{/if}} {{#unless editable}}disabled{{/unless}}>
+            <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+            <span class="arkhanval-item-tags__choice-label">{{localize "ARKHANVAL.ItemSheet.Repeatable"}}</span>
+          </label>
+        </div>
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+  {{else if typeFlags.people}}
+    <section class="arkhanval-item-core arkhanval-item-core--catalog ark-item-primary ark-item-primary--people">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt=""
+          {{#if editable}}data-item-image-picker title="Changer l’icône du peuple"{{/if}}>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name">
+          <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+        </label>
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+  {{else if typeFlags.state}}
+    <section class="arkhanval-item-core arkhanval-item-core--catalog ark-item-primary ark-item-primary--state">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt=""
+          {{#if editable}}data-item-image-picker title="Changer l’icône de l’état"{{/if}}>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name">
+          <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+        </label>
+      </div>
+      {{#if declaredRules.length}}
+        <section class="ark-item-rule-summary" aria-label="Règles renseignées">
+          <strong>Effets mécaniques renseignés</strong><ul>{{#each declaredRules as |rule|}}<li><span>{{rule.label}}{{#if rule.value}} : {{rule.value}}{{/if}}</span>{{#if rule.target}}<small class="ark-item-rule-summary__target">Cible : {{rule.target}}</small>{{/if}}{{#if rule.details}}<small class="ark-item-rule-summary__details">{{rule.details}}</small>{{/if}}</li>{{/each}}</ul>
+        </section>
+      {{/if}}
+    </section>
+  {{else if typeFlags.wound}}
+    <section class="arkhanval-item-core arkhanval-item-core--catalog ark-item-primary ark-item-primary--wound">
+      <div class="ark-item-primary__visual">
+        <img class="arkhanval-item-core__image" src="{{item.img}}" alt=""
+          {{#if editable}}data-item-image-picker title="Changer l’icône de la blessure"{{/if}}>
+      </div>
+      <div class="ark-item-primary__fields">
+        <label class="ark-item-primary__name">
+          <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+        </label>
+        <div class="ark-item-primary__row ark-item-primary__row--wound">
+          <label>
+            <span>{{localize "ARKHANVAL.ItemSheet.Severity"}}</span>
+            <select name="system.severity" {{#unless editable}}disabled{{/unless}}>
+              {{#each severityOptions as |option|}}
+                <option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+              {{/each}}
+            </select>
+          </label>
+          <label class="arkhanval-item-tags__choice arkhanval-item-sheet__choice--inline ark-item-wound-treated">
+            <input class="arkhanval-item-tags__native-check" type="checkbox" name="system.treated" {{#if system.treated}}checked{{/if}} {{#unless editable}}disabled{{/unless}}>
+            <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+            <span class="arkhanval-item-tags__choice-label">{{localize "ARKHANVAL.ItemSheet.Treated"}}</span>
+          </label>
+        </div>
+      </div>
+    </section>
+  {{else}}
+    <header class="arkhanval-item-sheet__header">
+      <label class="arkhanval-item-sheet__name">
+        <span>{{localize "ARKHANVAL.Fields.Name"}}</span>
+        <input type="text" name="name" value="{{item.name}}" {{#unless editable}}disabled{{/unless}}>
+      </label>
+
+      <div class="arkhanval-item-sheet__meta">
+        <span><strong>{{localize "ARKHANVAL.ItemSheet.Type"}} :</strong> {{typeLabel}}</span>
+        {{#if isOwned}}
+          <span><strong>{{localize "ARKHANVAL.ItemSheet.OwnedBy"}} :</strong> {{ownerName}}</span>
+        {{/if}}
+      </div>
+    </header>
+  {{/if}}
+
+  {{#if typeFlags.armor}}
+    <section class="arkhanval-item-sheet__section ark-item-armor-properties">
+      <div class="ark-item-property-row">
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Price"}}</span><input type="text" name="system.price" value="{{system.price}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Fabrication"}}</span><input type="text" name="system.fabrication" value="{{system.fabrication}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Restrictions"}}</span><input type="text" name="system.restrictions" value="{{system.restrictions}}" {{#unless editable}}disabled{{/unless}}></label>
+        <label><span>{{localize "ARKHANVAL.ItemSheet.Encumbrance"}}</span><input type="text" name="system.encumbrance" value="{{system.encumbrance}}" {{#unless editable}}disabled{{/unless}}></label>
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if hasWeaponAutomaticEffects}}
+    <section class="arkhanval-item-automatic-effects" aria-label="Effets automatiques">
+      <header class="arkhanval-item-automatic-effects__header">
+        <strong>Effets automatiques</strong>
+        <span>{{weaponAutomaticEffects.length}}</span>
+      </header>
+      <ul class="arkhanval-item-automatic-effects__list">
+        {{#each weaponAutomaticEffects as |effect|}}
+          <li>
+            <strong>{{effect.specialtyName}}</strong>
+            <span>— {{effect.label}} : {{effect.value}}</span>
+          </li>
+        {{/each}}
+      </ul>
+    </section>
+  {{/if}}
+
+  {{#if typeFlags.specialty}}
+    <section class="arkhanval-item-sheet__section arkhanval-item-specialty-description ark-item-description">
+      <label class="arkhanval-richtext-field arkhanval-richtext">
+        <span>{{localize "ARKHANVAL.ItemSheet.Description"}}</span>
+        {{formInput systemFields.description
+          value=system.description
+          enriched=enriched.description
+          name="system.description"
+          toggled=editable
+          disabled=readOnly
+        }}
+      </label>
+    </section>
+  {{/if}}
+
+
+
+  {{#if typeFlags.wound}}
+    <section class="arkhanval-item-sheet__section ark-item-wound-notes">
+      <label class="arkhanval-richtext-field arkhanval-richtext arkhanval-richtext-field--compact">
+        <span>{{localize "ARKHANVAL.ItemSheet.Notes"}}</span>
+        {{formInput systemFields.notes
+          value=system.notes
+          enriched=enriched.notes
+          name="system.notes"
+          toggled=editable
+          disabled=readOnly
+        }}
+      </label>
+      <small>{{localize "ARKHANVAL.Phase04.WoundCareHint"}}</small>
+    </section>
+    <section class="arkhanval-item-sheet__section ark-item-description ark-item-wound-description">
+      <label class="arkhanval-richtext-field arkhanval-richtext">
+        <span>{{localize "ARKHANVAL.ItemSheet.Description"}}</span>
+        {{formInput systemFields.description value=system.description enriched=enriched.description name="system.description" toggled=editable disabled=readOnly}}
+      </label>
+      <details class="arkhanval-item-sheet__technical">
+        <summary>{{localize "ARKHANVAL.ItemSheet.Identifier"}}</summary>
+        <input type="text" name="system.identifier" value="{{system.identifier}}" {{#unless canEditIdentifier}}disabled{{/unless}}>
+      </details>
+    </section>
+  {{/if}}
+
+
+
+
+  {{#if typeFlags.armor}}
+    <section class="arkhanval-item-sheet__section ark-item-description">
+      <label class="arkhanval-richtext-field arkhanval-richtext arkhanval-richtext-field--large">
+        <span>{{localize "ARKHANVAL.ItemSheet.Description"}}</span>
+        {{formInput systemFields.description value=system.description enriched=enriched.description name="system.description" toggled=editable disabled=readOnly}}
+      </label>
+    </section>
+  {{/if}}
+
+  {{#if showTagEditor}}
+    <details class="arkhanval-item-panel arkhanval-item-tags" data-tag-panel {{#if tagPanelOpen}}open{{/if}}>
+      <summary class="arkhanval-item-panel__summary">
+        <span>{{tagPanelTitle}}</span>
+        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+      </summary>
+
+      <div class="arkhanval-item-panel__body">
+        {{#if typeFlags.weapon}}
+          <section class="arkhanval-item-tags__subgroup">
+            <span class="arkhanval-item-tags__subgroup-title">Type</span>
+            <div class="arkhanval-item-tags__grid arkhanval-item-tags__grid--compact">
+              {{#each weaponTypeOptions as |tag|}}
+                <label class="arkhanval-item-tags__choice">
+                  <input class="arkhanval-item-tags__native-check" type="checkbox" data-system-tag="{{tag.id}}" {{#if tag.checked}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}>
+                  <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+                  <span class="arkhanval-item-tags__choice-label">{{tag.label}}</span>
+                </label>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="arkhanval-item-tags__subgroup">
+            <span class="arkhanval-item-tags__subgroup-title">Type de dégâts</span>
+            <div class="arkhanval-item-tags__grid arkhanval-item-tags__grid--compact">
+              {{#each weaponDamageOptions as |tag|}}
+                <label class="arkhanval-item-tags__choice">
+                  <input class="arkhanval-item-tags__native-check" type="checkbox" data-system-tag="{{tag.id}}" {{#if tag.checked}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}>
+                  <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+                  <span class="arkhanval-item-tags__choice-label">{{tag.label}}</span>
+                </label>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="arkhanval-item-tags__subgroup arkhanval-item-tags__families">
+            <span class="arkhanval-item-tags__subgroup-title">Famille</span>
+            <div class="arkhanval-item-tags__family-list">
+              {{#each weaponFamilyRows as |row|}}
+                <select data-weapon-family {{#unless ../editable}}disabled{{/unless}}>
+                  {{#each row.options as |option|}}
+                    <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                  {{/each}}
+                </select>
+              {{/each}}
+            </div>
+          </section>
+
+        {{else}}
+          {{#if tagOptions.length}}
+            <div class="arkhanval-item-tags__grid">
+              {{#each tagOptions as |tag|}}
+                <label class="arkhanval-item-tags__choice">
+                  <input class="arkhanval-item-tags__native-check" type="checkbox" data-system-tag="{{tag.id}}" {{#if tag.checked}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}>
+                  <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+                  <span class="arkhanval-item-tags__choice-label">{{tag.label}}</span>
+                </label>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          <label>
+            <span>Tags personnalisés</span>
+            <input
+              type="text"
+              data-custom-tags
+              value="{{customTagsText}}"
+              placeholder="rapiere, argent, improvisée"
+              {{#unless editable}}disabled{{/unless}}
+            >
+          </label>
+        {{/if}}
+      </div>
+    </details>
+  {{/if}}
+
+  {{#unless typeFlags.specialty}}
+    {{#unless typeFlags.state}}
+    {{#unless typeFlags.people}}
+    {{#unless typeFlags.wound}}
+    {{#unless typeFlags.armor}}
+    <section class="arkhanval-item-sheet__section">
+      <label class="arkhanval-richtext-field arkhanval-richtext">
+        <span>{{localize "ARKHANVAL.ItemSheet.Description"}}</span>
+        {{formInput systemFields.description
+          value=system.description
+          enriched=enriched.description
+          name="system.description"
+          toggled=editable
+          disabled=readOnly
+        }}
+      </label>
+
+    {{#unless typeFlags.weapon}}
+    {{#unless typeFlags.equipment}}
+    {{#unless typeFlags.trait}}
+    {{#unless typeFlags.spell}}
+      <details class="arkhanval-item-sheet__technical">
+        <summary>{{localize "ARKHANVAL.ItemSheet.Identifier"}}</summary>
+        <input type="text" name="system.identifier" value="{{system.identifier}}" {{#unless canEditIdentifier}}disabled{{/unless}}>
+      </details>
+    {{/unless}}
+    {{/unless}}
+    {{/unless}}
+    {{/unless}}
+    </section>
+    {{/unless}}
+    {{/unless}}
+    {{/unless}}
+    {{/unless}}
+  {{/unless}}
+
+  {{#if typeFlags.spell}}
+    <section class="arkhanval-item-sheet__section arkhanval-item-spell-specialization">
+      <label class="arkhanval-richtext-field arkhanval-richtext">
+        <span>{{localize "ARKHANVAL.ItemSheet.Specialization"}}</span>
+        {{formInput systemFields.specialization
+          value=system.specialization
+          enriched=enriched.specialization
+          name="system.specialization"
+          toggled=editable
+          disabled=readOnly
+        }}
+      </label>
+    </section>
+  {{/if}}
+
+  {{#if advancedItemSidebar}}</div>{{/if}}
+  {{#if sidebarRuleItem}}<button type="button" class="ark-item-rules-toggle" data-equipment-rules-toggle
+    aria-expanded="{{#if equipmentRulesSidebarOpen}}true{{else}}false{{/if}}"
+    aria-controls="{{#if typeFlags.equipment}}arkhanval-equipment-rules{{else}}arkhanval-item-rules{{/if}}" title="Afficher ou masquer les effets mécaniques"><span>Effets mécaniques</span>
+    <i class="fa-solid fa-chevron-{{#if equipmentRulesSidebarOpen}}right{{else}}left{{/if}}" aria-hidden="true"></i>
+  </button>{{/if}}
+  {{#if showPersistentRuleItem}}
+    {{#if showPersistentRuleDescription}}
+      <section class="arkhanval-item-sheet__section arkhanval-item-specialty-description arkhanval-item-state-description">
+        <label class="arkhanval-richtext-field arkhanval-richtext">
+          <span>{{localize "ARKHANVAL.ItemSheet.Description"}}</span>
+          {{formInput systemFields.description
+            value=system.description
+            enriched=enriched.description
+            name="system.description"
+            toggled=editable
+            disabled=readOnly
+          }}
+        </label>
+      </section>
+    {{/if}}
+
+    <details
+      class="arkhanval-item-panel arkhanval-item-specialty-rules-panel arkhanval-item-state-rules-panel"
+      {{#if typeFlags.equipment}}id="arkhanval-equipment-rules"{{else}}id="arkhanval-item-rules"{{/if}}
+      data-persistent-rules-panel
+      {{#if persistentRulesPanelOpen}}open{{/if}}
+    >
+      <summary class="arkhanval-item-panel__summary">
+        <span>{{persistentRulesTitle}}</span>
+        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+      </summary>
+
+      <div class="arkhanval-item-panel__body">
+        {{#if directRuleItem}}
+          <header class="ark-item-direct-rules__title"><strong>{{persistentRulesTitle}}</strong></header>
+        {{/if}}
+        {{#if typeFlags.specialty}}
+          <section class="arkhanval-item-rules__subsection">
+            <header class="arkhanval-item-rules__subheading"><strong>Comportement</strong></header>
+            <div class="arkhanval-item-specialty-behavior">
+              <div class="arkhanval-item-specialty-behavior__fields">
+                <label>
+                  <span>Prise en charge</span>
+                  <select name="system.handling" {{#unless editable}}disabled{{/unless}}>
+                    {{#each handlingOptions as |option|}}
+                      <option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                    {{/each}}
+                  </select>
+                </label>
+                <label>
+                  <span>Multiplicateur coût tardif</span>
+                  <input type="number" min="0" step="0.1" name="system.acquisition.lateCostMultiplier" value="{{system.acquisition.lateCostMultiplier}}" {{#unless editable}}disabled{{/unless}}>
+                </label>
+              </div>
+              <label class="arkhanval-item-tags__choice arkhanval-item-specialty-behavior__creation-only">
+                <input class="arkhanval-item-tags__native-check" type="checkbox" name="system.acquisition.creationOnly" {{#if system.acquisition.creationOnly}}checked{{/if}} {{#unless editable}}disabled{{/unless}}>
+                <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+                <span class="arkhanval-item-tags__choice-label">Création uniquement</span>
+              </label>
+            </div>
+          </section>
+        {{/if}}
+        {{#if showRuleParameters}}
+        <section class="arkhanval-item-rules__subsection arkhanval-item-specialty-parameters">
+          <header class="arkhanval-item-rules__header">
+            <div>
+              <strong>Paramètres</strong>
+              <small>Choix persistants utilisés par les règles : compétence, famille, source, etc.</small>
+            </div>
+            {{#if editable}}
+              <button type="button" data-specialty-parameter-add>
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                Ajouter
+              </button>
+            {{/if}}
+          </header>
+
+          <div class="arkhanval-item-specialty-parameters__list">
+            {{#each parameterRows as |parameter|}}
+              <div class="arkhanval-item-specialty-parameter" data-specialty-parameter-row data-specialty-parameter-index="{{parameter.index}}">
+                <label>
+                  <span>Clé</span>
+                  <input type="text" data-specialty-parameter-key value="{{parameter.key}}" placeholder="ex. targetSkill ou sourceSkill" {{#unless ../editable}}disabled{{/unless}}>
+                </label>
+                <label>
+                  <span>Valeur</span>
+                  <input type="text" data-specialty-parameter-value value="{{parameter.value}}" placeholder="Identifiant ou tag" {{#unless ../editable}}disabled{{/unless}}>
+                </label>
+                {{#if ../editable}}
+                  <button type="button" class="arkhanval-item-rule__remove" data-specialty-parameter-remove="{{parameter.index}}" title="Supprimer ce paramètre" aria-label="Supprimer ce paramètre">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                  </button>
+                {{/if}}
+              </div>
+            {{else}}
+              <p class="arkhanval-item-rules__empty">Aucun paramètre persistant.</p>
+            {{/each}}
+          </div>
+        </section>
+
+        {{/if}}
+
+        <section class="arkhanval-item-rules__subsection arkhanval-item-rules">
+          <header class="arkhanval-item-rules__header">
+            <div>
+              <strong>Effets</strong>
+              <small>Choisissez un effet, sa cible et sa valeur.</small>
+            </div>
+            {{#if editable}}
+              <button type="button" data-rule-add>
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                Ajouter une règle
+              </button>
+            {{/if}}
+          </header>
+
+          <div class="arkhanval-item-rules__list">
+            {{#each ruleRows as |rule|}}
+              <article class="arkhanval-item-rule" data-rule-id="{{rule.id}}">
+                <div class="arkhanval-item-rule__fields">
+                  <label>
+                    <span>Effet</span>
+                    <select data-rule-key {{#unless ../editable}}disabled{{/unless}}>
+                      {{#each rule.keyGroups as |group|}}
+                        <optgroup label="{{group.label}}">
+                          {{#each group.options as |option|}}
+                            <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                          {{/each}}
+                        </optgroup>
+                      {{/each}}
+                    </select>
+                  </label>
+
+                  <label>
+                    <span>Cible</span>
+                    <select data-rule-selector {{#unless ../editable}}disabled{{/unless}}>
+                      {{#each rule.selectorOptions as |option|}}
+                        <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                      {{/each}}
+                    </select>
+                  </label>
+
+                  {{#if rule.customSelector}}
+                    <label>
+                      <span>Tag personnalisé</span>
+                      <input type="text" data-rule-custom-tag value="{{rule.customTag}}" placeholder="ex. rapiere" {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                  {{/if}}
+
+                  {{#if rule.parameterSelector}}
+                    <label>
+                      <span>Clé du paramètre</span>
+                      <input type="text" data-rule-parameter-key value="{{rule.parameterKey}}" placeholder="ex. skill ou sourceSkill" {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                  {{/if}}
+
+                  <label>
+                    <span>Valeur / formule</span>
+                    <input type="text" data-rule-value value="{{rule.value}}" placeholder="{{rule.valuePlaceholder}}" {{#unless ../editable}}disabled{{/unless}}>
+                  </label>
+
+                  {{#if rule.showRounding}}
+                    <label>
+                      <span>Arrondi</span>
+                      <select data-rule-rounding {{#unless ../editable}}disabled{{/unless}}>
+                        {{#each rule.roundingOptions as |option|}}
+                          <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                        {{/each}}
+                      </select>
+                    </label>
+                  {{/if}}
+
+                  {{#if rule.showKeepMode}}
+                    <label>
+                      <span>Résultat conservé</span>
+                      <select data-rule-mode {{#unless ../editable}}disabled{{/unless}}>
+                        {{#each rule.keepModeOptions as |option|}}
+                          <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                        {{/each}}
+                      </select>
+                    </label>
+                  {{/if}}
+                </div>
+
+                {{#if ../editable}}
+                  <button type="button" class="arkhanval-item-rule__remove" data-rule-remove="{{rule.id}}" title="Supprimer cette règle" aria-label="Supprimer cette règle">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                  </button>
+                {{/if}}
+              </article>
+            {{else}}
+              <p class="arkhanval-item-rules__empty">{{persistentRulesEmptyText}}</p>
+            {{/each}}
+          </div>
+        </section>
+
+        {{#if typeFlags.weapon}}
+          <label class="ark-item-advanced-tags"><span>Tags personnalisés</span>
+            <input type="text" data-custom-tags value="{{customTagsText}}" placeholder="rapiere, argent, improvisée" {{#unless editable}}disabled{{/unless}}>
+          </label>
+        {{/if}}
+        {{#if typeFlags.armor}}
+          <label class="ark-item-advanced-tags"><span>Tags personnalisés</span>
+            <input type="text" data-custom-tags value="{{customTagsText}}" placeholder="lourde, renforcée, magique…" {{#unless editable}}disabled{{/unless}}>
+          </label>
+        {{/if}}
+        {{#if typeFlags.spell}}
+          <label class="ark-item-advanced-tags"><span>Tags personnalisés</span>
+            <input type="text" data-custom-tags value="{{customTagsText}}" placeholder="rituel, focus, préparation…" {{#unless editable}}disabled{{/unless}}>
+          </label>
+        {{/if}}
+        {{#if showPersistentRuleTechnical}}
+          <details class="arkhanval-item-sheet__technical">
+            <summary>{{localize "ARKHANVAL.ItemSheet.Identifier"}}</summary>
+            <input type="text" name="system.identifier" value="{{system.identifier}}" {{#unless canEditIdentifier}}disabled{{/unless}}>
+          </details>
+        {{/if}}
+      </div>
+    </details>
+  {{/if}}
+
+  {{!-- Item actions are independent of the rules-toggle height and sidebar. --}}
+  {{#if showSimpleActions}}
+    <footer class="arkhanval-item-sheet__footer ark-item-actions">
+      {{#if editable}}<button type="button" class="ark-item-actions__save" data-save-item><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Enregistrer</button>{{/if}}
+      {{#if canDeleteOwned}}{{#if editable}}
+        <button type="button" class="arkhanval-item-sheet__delete" data-delete-owned-item><i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer l’objet</button>
+      {{/if}}{{/if}}
+    </footer>
+  {{else if advancedItemSidebar}}
+    <footer class="arkhanval-item-sheet__footer ark-item-actions">
+      {{#if editable}}<button type="button" class="ark-item-actions__save" data-save-item><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Enregistrer</button>{{/if}}
+      {{#if canDeleteOwned}}{{#if editable}}<button type="button" class="arkhanval-item-sheet__delete" data-delete-owned-item><i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer l’objet</button>{{/if}}{{/if}}
+    </footer>
+  {{else if canDeleteOwned}}
+    {{#if editable}}
+      <footer class="arkhanval-item-sheet__footer">
+        <button type="button" class="arkhanval-item-sheet__delete" data-delete-owned-item><i class="fa-solid fa-trash" aria-hidden="true"></i> {{localize "ARKHANVAL.ItemSheet.DeleteOwned"}}</button>
+      </footer>
+    {{/if}}
+  {{/if}}
+
+</div>

@@ -1,0 +1,465 @@
+/* Arkhanval Rich Text — proposition V1
+ * À placer idéalement dans : styles/richtext/arkhanval-richtext.css
+ * Les @font-face existent déjà dans styles/arkhanval.css.
+ */
+
+.arkhanval-richtext {
+  --ark-rich-ink: var(--arkhanval-color-ink);
+  --ark-rich-ink-soft: #625e50;
+  --ark-rich-red: var(--arkhanval-color-red-emphasis);
+  --ark-rich-red-dark: #733027;
+  --ark-rich-blue: var(--arkhanval-color-blue);
+  --ark-rich-green: var(--arkhanval-color-green);
+  --ark-rich-gold: var(--arkhanval-color-gold);
+  --ark-rich-paper: var(--arkhanval-surface-paper-soft);
+  --ark-rich-line: rgba(89, 77, 59, 0.24);
+  /* Ergonomie C02 : l'éditeur grandit avec son contenu jusqu'à cette limite. */
+  --ark-rich-editor-max-height: 420px;
+
+  color: var(--ark-rich-ink);
+  font-family: "Arkhanval Radio Canada", sans-serif;
+  /* La taille « petit » de la C01 devient la taille éditoriale normale. */
+  font-size: 13px;
+  line-height: 1.35;
+  text-rendering: optimizeLegibility;
+}
+
+.arkhanval-richtext > :first-child { margin-top: 0; }
+.arkhanval-richtext > :last-child { margin-bottom: 0; }
+.arkhanval-richtext p { margin: 0 0 0.32em; }
+.arkhanval-richtext strong { color: #36382b; font-weight: 600; }
+.arkhanval-richtext em { color: var(--ark-rich-ink-soft); }
+
+.arkhanval-richtext h1,
+.arkhanval-richtext h2,
+.arkhanval-richtext h3,
+.arkhanval-richtext h4 {
+  font-family: "Arkhanval Faculty Glyphic", "Arkhanval Radio Canada", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+}
+
+/* Grand titre : rouge Arkhanval, centré, séparation discrète. */
+.arkhanval-richtext h1 {
+  margin: 0.25em 0 0.8em;
+  padding: 0 0 0.3em;
+  color: var(--ark-rich-red);
+  border: 0;
+  font-size: 2.15em;
+  line-height: 1.05;
+  text-align: center;
+}
+.arkhanval-richtext h1::after {
+  content: "◆";
+  display: block;
+  width: 72%;
+  margin: 0.28em auto 0;
+  overflow: hidden;
+  color: rgba(182, 139, 88, 0.78);
+  border-top: 1px solid rgba(182, 139, 88, 0.58);
+  font-family: serif;
+  font-size: 0.32em;
+  line-height: 0;
+  text-align: center;
+}
+
+/* Titre de section : bleu grisé, proche des libellés de la fiche. */
+.arkhanval-richtext h2 {
+  margin: 1.25em 0 0.55em;
+  padding: 0.18em 0.45em 0.22em;
+  color: var(--ark-rich-blue);
+  border: 0;
+  border-left: 3px solid rgba(115, 114, 144, 0.72);
+  border-bottom: 1px solid rgba(115, 114, 144, 0.28);
+  font-size: 1.55em;
+  line-height: 1.15;
+}
+
+/* Sous-section : vert/olive des archétypes. */
+.arkhanval-richtext h3 {
+  margin: 1.05em 0 0.42em;
+  color: var(--ark-rich-green);
+  font-size: 1.25em;
+  line-height: 1.2;
+}
+
+.arkhanval-richtext h4 {
+  margin: 0.9em 0 0.35em;
+  color: var(--ark-rich-red-dark);
+  font-size: 1.05em;
+  line-height: 1.25;
+}
+
+/* Liens et enrichissements Foundry. */
+.arkhanval-richtext a,
+.arkhanval-richtext .content-link,
+.arkhanval-richtext .inline-roll {
+  color: var(--ark-rich-red-dark);
+  text-decoration-color: rgba(158, 64, 50, 0.34);
+  text-underline-offset: 2px;
+}
+.arkhanval-richtext a:hover,
+.arkhanval-richtext .content-link:hover,
+.arkhanval-richtext .inline-roll:hover {
+  color: var(--ark-rich-red);
+  text-decoration-color: currentColor;
+}
+
+.arkhanval-richtext ul,
+.arkhanval-richtext ol {
+  margin: 0.55em 0 0.9em 1.15em;
+  padding-left: 0.85em;
+}
+.arkhanval-richtext li { margin: 0.22em 0; }
+.arkhanval-richtext li::marker { color: var(--ark-rich-red); }
+
+/* Citation : sobre, légèrement verdâtre, sans grosse boîte moderne. */
+.arkhanval-richtext blockquote {
+  position: relative;
+  margin: 1em 1.2em;
+  padding: 0.75em 1em 0.75em 1.15em;
+  color: #555348;
+  border: 0;
+  border-left: 3px solid rgba(105, 111, 83, 0.72);
+  background: linear-gradient(90deg, rgba(105, 111, 83, 0.10), rgba(255,255,255,0));
+  font-style: italic;
+}
+.arkhanval-richtext blockquote::before {
+  content: "“";
+  position: absolute;
+  top: -0.18em;
+  left: 0.12em;
+  color: rgba(105, 111, 83, 0.30);
+  font-family: Georgia, serif;
+  font-size: 3.2em;
+  line-height: 1;
+}
+
+.arkhanval-richtext hr {
+  height: 1px;
+  margin: 1.45em 9%;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--ark-rich-line) 18%, var(--ark-rich-line) 82%, transparent);
+}
+
+/* Tables : fonctionnelles, mais intégrées à la palette. */
+.arkhanval-richtext table {
+  width: 100%;
+  margin: 1em 0 1.2em;
+  border-collapse: collapse;
+  border: 1px solid rgba(105, 111, 83, 0.28);
+  background: rgba(255, 252, 245, 0.42);
+  font-size: 0.94em;
+}
+.arkhanval-richtext th,
+.arkhanval-richtext td {
+  padding: 0.5em 0.65em;
+  border: 1px solid rgba(105, 111, 83, 0.20);
+  text-align: left;
+  vertical-align: top;
+}
+.arkhanval-richtext th {
+  color: #f4eddf;
+  background: rgba(105, 111, 83, 0.92);
+  font-family: "Arkhanval Faculty Glyphic", sans-serif;
+  font-weight: 400;
+}
+.arkhanval-richtext tbody tr:nth-child(even) {
+  background: rgba(105, 111, 83, 0.055);
+}
+
+/* Les Secrets conservent leur comportement Foundry ; seul le rendu change. */
+.arkhanval-richtext section.secret,
+.arkhanval-richtext .secret {
+  padding: 0.75em 0.9em;
+  border: 1px dashed rgba(158, 64, 50, 0.50);
+  background: rgba(158, 64, 50, 0.055);
+}
+
+/* Encadrés éditoriaux optionnels : futurs Journaux / compendiums premium. */
+.arkhanval-richtext .arkhanval-box {
+  --ark-box-accent: var(--ark-rich-blue);
+  position: relative;
+  margin: 1.05em 0;
+  padding: 1.05em 1.15em 1em 1.25em;
+  border: 1px solid rgba(93, 78, 60, 0.20);
+  background: var(--ark-rich-paper);
+  box-shadow: 1px 2px 5px rgba(68, 49, 32, 0.16);
+}
+.arkhanval-richtext .arkhanval-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  background: var(--ark-box-accent);
+}
+.arkhanval-richtext .arkhanval-box > :first-child { margin-top: 0; }
+.arkhanval-richtext .arkhanval-box > :last-child { margin-bottom: 0; }
+.arkhanval-richtext .arkhanval-box-title {
+  margin: 0 0 0.35em;
+  color: var(--ark-box-accent);
+  font-family: "Arkhanval Faculty Glyphic", sans-serif;
+  font-size: 1.22em;
+}
+.arkhanval-richtext .arkhanval-box--rule { --ark-box-accent: var(--ark-rich-blue); }
+.arkhanval-richtext .arkhanval-box--example { --ark-box-accent: var(--ark-rich-green); }
+.arkhanval-richtext .arkhanval-box--gm { --ark-box-accent: var(--ark-rich-red); }
+
+/* Journal : le corps du papier officiel devient la surface globale.
+ * Le header Arkhanval n'est volontairement pas utilisé dans les pages de Journal.
+ * Ce wrapper est à appliquer à la page de Journal, pas aux petits Rich Text d'Item.
+ */
+.arkhanval-journal-theme {
+  min-height: 100%;
+  padding: 42px 52px 56px;
+  background-color: #f5efe2;
+  background-image: url("../../assets/sheets/sheet-paper-body.webp");
+  background-position: center top;
+  background-repeat: repeat-y;
+  background-size: 113% auto;
+}
+
+/* Journal uniquement : conserver les espacements d’origine. */
+.arkhanval-richtext.arkhanval-journal-theme p { text-align: justify; }
+
+/* Foundry UUID links are interactive references, not black pills on paper.
+ * Scope deliberately excludes Chat links and embedded Item editors.
+ * Preserve Foundry's a.content-link / data-uuid DOM and its click handlers. */
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a.content-link,
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a[data-uuid] {
+  display: inline;
+  padding: 0.08em 0.4em;
+  max-width: 100%;
+  border: 1px solid var(--arkhanval-border-default);
+  border-radius: var(--arkhanval-radius-small);
+  background: var(--arkhanval-surface-paper-soft);
+  color: var(--arkhanval-color-red-dark);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 50%);
+}
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a.content-link:hover,
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a[data-uuid]:hover {
+  border-color: var(--arkhanval-color-red);
+  background: var(--arkhanval-surface-paper-strong);
+  color: var(--arkhanval-color-red-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a.content-link:focus-visible,
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a[data-uuid]:focus-visible {
+  outline: 2px solid var(--arkhanval-focus-color);
+  outline-offset: 2px;
+  box-shadow: var(--arkhanval-focus-ring);
+}
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a.content-link i,
+:is(.journal-entry, .journal-entry-page) .arkhanval-journal-theme a[data-uuid] i {
+  color: var(--arkhanval-color-red);
+}
+
+@media (max-width: 720px) {
+  .arkhanval-journal-theme { padding: 28px 28px 40px; }
+  .arkhanval-richtext { font-size: 13px; }
+  .arkhanval-richtext h1 { font-size: 1.85em; }
+}
+/* ------------------------------------------------------------------------- */
+/* /C02 — Foundry v14 integration                                */
+/* ------------------------------------------------------------------------- */
+
+/* Native HTMLField editors on Arkhanval Item sheets. */
+.arkhanval-item-sheet .arkhanval-richtext-field {
+  min-width: 0;
+}
+
+/*
+ * C02 — fluid editor geometry.
+ * The max is intentionally centralized in --ark-rich-editor-max-height above:
+ * it can be adjusted later without touching JS or the templates.
+ * `height:auto` lets the native editor follow its content; once the maximum is
+ * reached it scrolls. `resize:vertical` keeps a manual handle for the user.
+ */
+.arkhanval-item-sheet .arkhanval-richtext-field > prose-mirror,
+.arkhanval-character-sheet .arkhanval-character-richtext-field > prose-mirror,
+.arkhanval-character-sheet .arkhanval-spell-description-field > prose-mirror {
+  width: 100%;
+  height: auto !important;
+  max-height: var(--ark-rich-editor-max-height);
+  box-sizing: border-box;
+  overflow: auto;
+  resize: vertical;
+}
+
+.arkhanval-item-sheet .arkhanval-richtext-field > prose-mirror,
+.arkhanval-item-sheet .arkhanval-richtext-field > .editor,
+.arkhanval-item-sheet .arkhanval-richtext-field .editor-content {
+  min-height: 118px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.arkhanval-item-sheet .arkhanval-richtext-field--compact > prose-mirror,
+.arkhanval-item-sheet .arkhanval-richtext-field--compact > .editor,
+.arkhanval-item-sheet .arkhanval-richtext-field--compact .editor-content {
+  min-height: 82px;
+}
+
+.arkhanval-item-sheet .arkhanval-richtext-field--large > prose-mirror,
+.arkhanval-item-sheet .arkhanval-richtext-field--large > .editor,
+.arkhanval-item-sheet .arkhanval-richtext-field--large .editor-content {
+  min-height: 154px;
+}
+
+/* Preserve the paper-block geometry of page 2 while switching the two
+ * narrative Actor fields from textarea to native HTMLField form inputs. */
+.arkhanval-character-sheet .arkhanval-character-richtext-field {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-width: 0;
+}
+
+.arkhanval-character-sheet .arkhanval-character-richtext-field > prose-mirror,
+.arkhanval-character-sheet .arkhanval-character-richtext-field > .editor,
+.arkhanval-character-sheet .arkhanval-character-richtext-field .editor-content {
+  width: 100%;
+  min-height: 108px;
+  box-sizing: border-box;
+}
+
+.arkhanval-character-sheet .arkhanval-character-richtext-field--appearance > prose-mirror,
+.arkhanval-character-sheet .arkhanval-character-richtext-field--appearance > .editor,
+.arkhanval-character-sheet .arkhanval-character-richtext-field--appearance .editor-content {
+  min-height: 118px;
+}
+
+.arkhanval-character-sheet .arkhanval-character-richtext-field--medium > prose-mirror,
+.arkhanval-character-sheet .arkhanval-character-richtext-field--medium > .editor,
+.arkhanval-character-sheet .arkhanval-character-richtext-field--medium .editor-content {
+  min-height: 132px;
+}
+
+/* Page 3 spell descriptions now use the same native v14 HTMLField editor as
+ * the Item sheet while keeping the existing Embedded Item update workflow. */
+.arkhanval-character-sheet .arkhanval-spell-description-field > prose-mirror,
+.arkhanval-character-sheet .arkhanval-spell-description-field > .editor,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor-content {
+  width: 100%;
+  min-height: 116px;
+  box-sizing: border-box;
+  text-transform: none;
+}
+
+.arkhanval-character-sheet .arkhanval-spell-description-field prose-mirror .editor-content,
+.arkhanval-character-sheet .arkhanval-spell-description-field prose-mirror .ProseMirror,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor .editor-content,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor .ProseMirror {
+  min-height: 88px;
+}
+
+.arkhanval-character-sheet .arkhanval-spell-description-field menu,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor-menu {
+  gap: 4px;
+  padding: 4px 6px;
+}
+
+.arkhanval-character-sheet .arkhanval-spell-description-field menu button,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor-menu button,
+.arkhanval-character-sheet .arkhanval-spell-description-field menu select,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor-menu select,
+.arkhanval-character-sheet .arkhanval-spell-description-field menu .pm-dropdown,
+.arkhanval-character-sheet .arkhanval-spell-description-field .editor-menu .pm-dropdown {
+  min-height: 24px;
+  height: 24px;
+  padding: 2px 7px;
+  font-size: 12px;
+}
+
+/* Let the editable ProseMirror body follow its content instead of forcing a
+ * fixed-height viewport. The outer custom element owns max-height + resize. */
+.arkhanval-richtext prose-mirror .editor-container,
+.arkhanval-richtext prose-mirror .editor-content,
+.arkhanval-richtext prose-mirror .ProseMirror {
+  height: auto !important;
+  max-height: none !important;
+  box-sizing: border-box;
+}
+
+/* The V1 Journal identity is applied only to the Journal page content nodes
+ * tagged by module/richtext.mjs. Foundry chrome remains untouched. */
+.journal-entry .arkhanval-journal-theme,
+.journal-entry-page .arkhanval-journal-theme {
+  box-sizing: border-box;
+}
+
+/* Keep short Journal pages visually filled down to the bottom of the current
+ * Journal viewport. The paper can still grow normally when content is taller.
+ * This only applies in reading mode because the class is never added to the
+ * native ProseMirror editing surface. */
+.journal-entry .journal-entry-pages > .journal-entry-page:has(.arkhanval-journal-theme) {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.journal-entry .journal-entry-pages > .journal-entry-page > .arkhanval-journal-theme {
+  flex: 1 0 auto;
+}
+
+.journal-entry-page .window-content:has(> .arkhanval-journal-theme) {
+  display: flex;
+  flex-direction: column;
+}
+
+.journal-entry-page .window-content > .arkhanval-journal-theme {
+  flex: 1 0 auto;
+}
+
+/* Keep the native ProseMirror toolbar usable while letting edited content
+ * inherit Arkhanval editorial typography. */
+.arkhanval-richtext prose-mirror,
+.arkhanval-richtext .editor {
+  color: var(--ark-rich-ink);
+  font-family: "Arkhanval Radio Canada", sans-serif;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.arkhanval-richtext .editor-content,
+.arkhanval-richtext prose-mirror .ProseMirror {
+  color: var(--ark-rich-ink);
+  font-family: "Arkhanval Radio Canada", sans-serif;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* ProseMirror creates <p> blocks on a normal Enter. Keep those blocks visually
+ * close enough that an ordinary newline does not look like a full paragraph. */
+.arkhanval-richtext .editor-content p,
+.arkhanval-richtext prose-mirror .ProseMirror p {
+  margin-top: 0;
+  margin-bottom: 0.32em;
+}
+
+/* V1 helper boxes remain opt-in HTML classes inside the content. */
+
+/* Rich text toggle: discrete Arkhanval editor access control. */
+.arkhanval-richtext button.icon.toggle {
+  background: #74271f00 !important;
+  border-color: #5f1f1a00 !important;
+  color: var(--arkhanval-color-red) !important;
+  box-shadow: none !important;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.arkhanval-richtext button.icon.toggle:hover,
+.arkhanval-richtext button.icon.toggle:focus-visible {
+  background: rgb(158 64 50 / 8%) !important;
+  border-color: rgb(143 51 44 / 22%) !important;
+  color: var(--arkhanval-button-primary-hover, #8f332c) !important;
+  box-shadow: none !important;
+}

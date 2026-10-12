@@ -1,0 +1,1028 @@
+<div class="arkhanval-sheet-shell">
+  <nav class="arkhanval-sheet-tabs tabs" data-group="sheet" aria-label="{{localize "ARKHANVAL.Sheet.Navigation"}}">
+    <button type="button" class="arkhanval-sheet-tab {{tabs.character.cssClass}}" data-action="tab" data-group="sheet" data-tab="character">
+      <i class="{{tabs.character.icon}}" aria-hidden="true"></i>
+      <span>{{tabs.character.label}}</span>
+    </button>
+    <button type="button" class="arkhanval-sheet-tab {{tabs.equipment.cssClass}}" data-action="tab" data-group="sheet" data-tab="equipment">
+      <i class="{{tabs.equipment.icon}}" aria-hidden="true"></i>
+      <span>{{tabs.equipment.label}}</span>
+    </button>
+    <button type="button" class="arkhanval-sheet-tab {{tabs.spells.cssClass}}" data-action="tab" data-group="sheet" data-tab="spells">
+      <i class="{{tabs.spells.icon}}" aria-hidden="true"></i>
+      <span>{{tabs.spells.label}}</span>
+    </button>
+    <button type="button" class="arkhanval-sheet-tab {{tabs.progression.cssClass}}" data-action="tab" data-group="sheet" data-tab="progression">
+      <i class="{{tabs.progression.icon}}" aria-hidden="true"></i>
+      <span>{{tabs.progression.label}}</span>
+    </button>
+  </nav>
+
+  <div class="arkhanval-sheet-scroll">
+    <section class="tab {{tabs.character.cssClass}}" data-group="sheet" data-tab="character">
+      <div class="arkhanval-sheet-page arkhanval-sheet-page-1 arkhanval-sheet-page-1--dynamic" aria-label="{{localize "ARKHANVAL.Sheet.Pages.Character"}}">
+        <button type="button" class="arkhanval-advanced-lock" data-advanced-lock
+                aria-label="Déverrouiller la fiche" title="Déverrouiller la fiche"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-lock" aria-hidden="true"></i>
+        </button>
+
+        <img class="arkhanval-sheet-logo arkhanval-sheet-logo--page1"
+             src="systems/arkhanval/assets/sheets/common/logo_arkhanval.webp"
+             alt=""
+             aria-hidden="true">
+        <div class="arkhanval-page1-content">
+          <section class="arkhanval-page1-identity" aria-label="Identité">
+            <div class="arkhanval-identity-column arkhanval-identity-column--left">
+              <label class="arkhanval-identity-block">
+                <span class="arkhanval-section-label">{{localize "ARKHANVAL.Fields.Name"}}</span>
+                <span class="arkhanval-paper-input">
+                  <input class="arkhanval-overlay arkhanval-identity-field arkhanval-identity-field--name"
+                         type="text"
+                         data-actor-name
+                         value="{{actor.name}}"
+                         aria-label="{{localize "ARKHANVAL.Fields.Name"}}"
+                         {{#unless editable}}disabled{{/unless}}>
+                </span>
+              </label>
+
+              <label class="arkhanval-identity-block arkhanval-identity-block--people">
+                <span class="arkhanval-section-label">{{localize "ARKHANVAL.Fields.People"}}</span>
+                <span class="arkhanval-paper-input">
+                  <input class="arkhanval-overlay arkhanval-identity-field arkhanval-identity-field--people"
+                         type="text"
+                         value="{{identity.people}}"
+                         data-people-field
+                         aria-label="{{localize "ARKHANVAL.Fields.People"}}"
+                         {{#unless editable}}disabled{{/unless}}>
+                </span>
+              </label>
+            </div>
+<div class="arkhanval-portrait-frame">
+              <img class="arkhanval-portrait"
+                   src="{{actor.img}}"
+                   alt="Portrait de {{actor.name}}"
+                   {{#if editable}}data-action="editImage" data-edit="img" title="Modifier le portrait"{{/if}}>
+            </div>
+
+            <label class="arkhanval-identity-technique" aria-label="{{localize "ARKHANVAL.Fields.CombatTechniqueHelp"}}">
+              <span class="arkhanval-section-label arkhanval-section-label--combat-technique">{{localize "ARKHANVAL.Fields.CombatTechnique"}}</span>
+              <span class="arkhanval-paper-input arkhanval-paper-input--combat-technique">
+                <select class="arkhanval-combat-technique-select"
+                        name="{{identity.combatTechnique.name}}"
+                        data-combat-technique
+                        aria-label="{{localize "ARKHANVAL.Fields.CombatTechnique"}}"
+                        {{#unless editable}}disabled{{/unless}}>
+                  {{#each identity.combatTechnique.options as |option|}}
+                    <option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                  {{/each}}
+                </select>
+              </span>
+            </label>
+
+            <div class="arkhanval-identity-column arkhanval-identity-column--right">
+              <div class="arkhanval-identity-block">
+                <span class="arkhanval-section-label">{{localize "ARKHANVAL.Fields.MainArchetypes"}}</span>
+                <span class="arkhanval-paper-input arkhanval-paper-input--double">
+                  <span class="arkhanval-primary-archetypes" aria-label="{{localize "ARKHANVAL.Fields.MainArchetypes"}}">
+                    {{#each identity.primaryArchetypeSlots as |slot|}}
+                      <select class="arkhanval-archetype-select"
+                              data-primary-archetype-slot="{{slot.index}}"
+                              aria-label="{{localize "ARKHANVAL.Fields.MainArchetypes"}} {{slot.index}}"
+                              {{#unless ../editable}}disabled{{/unless}}>
+                        <option value=""></option>
+                        {{#each slot.options as |option|}}
+                          <option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                        {{/each}}
+                      </select>
+                    {{/each}}
+                  </span>
+                </span>
+              </div>
+
+              <label class="arkhanval-identity-block arkhanval-identity-block--origin">
+                <span class="arkhanval-section-label">{{localize "ARKHANVAL.Fields.Origin"}}</span>
+                <span class="arkhanval-paper-input">
+                  <input class="arkhanval-overlay arkhanval-identity-field arkhanval-identity-field--origin"
+                         type="text"
+                         name="{{identity.origin.name}}"
+                         value="{{identity.origin.value}}"
+                         aria-label="{{localize "ARKHANVAL.Fields.Origin"}}"
+                         {{#unless editable}}disabled{{/unless}}>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <section class="arkhanval-page1-main" aria-label="Archétypes, Arks et blessures">
+            <div class="arkhanval-archetype-column arkhanval-archetype-column--left">
+              {{#each archetypeColumns.left as |archetype|}}
+                <article class="arkhanval-archetype-card arkhanval-archetype-card--{{archetype.side}} arkhanval-archetype-card--{{archetype.id}}" data-archetype-id="{{archetype.id}}" style="--arkhanval-skill-row-count: {{archetype.skillRowCount}};">
+                  <header class="arkhanval-archetype-card__header">
+                    <div class="arkhanval-archetype-card__identity">
+                      <img class="arkhanval-archetype-card__icon"
+                           src="systems/arkhanval/assets/icones/archetype/{{archetype.id}}.webp"
+                           alt=""
+                           aria-hidden="true">
+                      <img class="arkhanval-archetype-card__title"
+                           src="systems/arkhanval/assets/sheets/page1/titre_{{archetype.id}}.webp"
+                           alt="{{archetype.label}}">
+                      <span class="arkhanval-die-index" aria-label="Repère {{archetype.displayIndex}}">
+                        <svg class="arkhanval-die-index__shape" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+                          <polygon points="11,1 21,8.2 17.2,20.5 4.8,20.5 1,8.2"></polygon>
+                        </svg>
+                        <span class="arkhanval-die-index__value">{{archetype.displayIndex}}</span>
+                      </span>
+                    </div>
+  
+                    <label class="arkhanval-archetype-xp">
+                      <span>XP</span>
+                      <input class="arkhanval-overlay arkhanval-number-field arkhanval-archetype-rank"
+                             type="number"
+                             name="{{archetype.xp.name}}"
+                             value="{{archetype.xp.value}}"
+                             aria-label="{{archetype.label}} - XP"
+                             title="{{archetype.label}} - XP"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                  </header>
+  
+                  <div class="arkhanval-skill-columns" aria-hidden="true">
+                    <span></span><span>Rang</span><span>XP</span>
+                  </div>
+  
+                  <div class="arkhanval-archetype-skills">
+                    {{#each archetype.skills as |skill|}}
+                      <div class="arkhanval-skill-row{{#if skill.isCustom}} arkhanval-skill-row--custom{{/if}}" data-skill-row-index="{{skill.index}}">
+                        <button class="arkhanval-skill-label{{#if skill.labelSize}} arkhanval-skill-label--{{skill.labelSize}}{{/if}} arkhanval-skill-action"
+                                type="button"
+                                data-skill-action
+                                data-skill-archetype="{{../id}}"
+                                data-skill-identifier="{{skill.identifier}}"
+                                data-skill-custom="{{skill.isCustom}}"
+                                {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}}
+                                aria-label="{{skill.itemName}} — {{#if skill.itemId}}{{localize "ARKHANVAL.Resolution.SkillClickHint"}}{{else}}{{localize "ARKHANVAL.Resolution.SkillClickHintRollOnly"}}{{/if}}">{{skill.itemName}}</button>
+                        <span class="arkhanval-skill-tooltip" role="tooltip" aria-hidden="true">
+                          <strong class="arkhanval-skill-tooltip__title">{{skill.itemName}}</strong>
+                          <span class="arkhanval-skill-tooltip__action">
+                            <span class="arkhanval-skill-tooltip__gesture"><span class="arkhanval-skill-tooltip__mouse" aria-hidden="true"><i class="fa-solid fa-computer-mouse"></i></span>Clic</span>
+                            <span class="arkhanval-skill-tooltip__arrow" aria-hidden="true">→</span>
+                            <span class="arkhanval-skill-tooltip__result">Préparer le jet</span>
+                          </span>
+                          <span class="arkhanval-skill-tooltip__action{{#unless skill.itemId}} arkhanval-skill-tooltip__action--unavailable{{/unless}}" data-skill-tooltip-detail {{#unless skill.itemId}}hidden{{/unless}}>
+                            <span class="arkhanval-skill-tooltip__gesture"><kbd>Maj</kbd><span aria-hidden="true">+</span><span class="arkhanval-skill-tooltip__mouse" aria-hidden="true"><i class="fa-solid fa-computer-mouse"></i></span>Clic</span>
+                            <span class="arkhanval-skill-tooltip__arrow" aria-hidden="true">→</span>
+                            <span class="arkhanval-skill-tooltip__result">Ouvrir la fiche</span>
+                          </span>
+                        </span>
+  
+                        <input class="arkhanval-overlay arkhanval-number-field arkhanval-skill-value"
+                               type="number"
+                               value="{{skill.rank}}"
+                               data-skill-field="rank"
+                               data-skill-archetype="{{../id}}"
+                               data-skill-identifier="{{skill.identifier}}"
+                               data-skill-name="{{skill.itemName}}"
+                               data-skill-custom="{{skill.isCustom}}"
+                               {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}}
+                               aria-label="{{archetype.label}} - compétence {{skill.index}} - valeur"
+                               title="{{archetype.label}} - compétence {{skill.index}} - valeur"
+                               {{#unless ../../editable}}disabled{{/unless}}>
+  
+                        <input class="arkhanval-overlay arkhanval-number-field arkhanval-skill-xp"
+                               type="number"
+                               value="{{skill.xp}}"
+                               data-skill-field="xp"
+                               data-skill-archetype="{{../id}}"
+                               data-skill-identifier="{{skill.identifier}}"
+                               data-skill-name="{{skill.itemName}}"
+                               data-skill-custom="{{skill.isCustom}}"
+                               {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}}
+                               aria-label="{{archetype.label}} - compétence {{skill.index}} - XP"
+                               title="{{archetype.label}} - compétence {{skill.index}} - XP"
+                               {{#unless ../../editable}}disabled{{/unless}}>
+                      </div>
+                    {{/each}}
+                  </div>
+                </article>
+              {{/each}}
+            </div>
+
+            <aside class="arkhanval-page1-center">
+              <section class="arkhanval-arks-panel" aria-label="Arks">
+                {{#each arkTracks as |track|}}
+                  <article class="arkhanval-ark-unit arkhanval-ark-unit--{{track.id}}">
+                    <div class="arkhanval-ark-track arkhanval-ark-track--{{track.id}}">
+                      {{#each track.marks as |mark|}}
+                        <label class="arkhanval-ark-mark arkhanval-ark-mark--{{mark.index}}" title="{{track.id}} {{mark.index}}">
+                          <input type="checkbox"
+                                 data-ark="{{track.id}}"
+                                 data-ark-circle="{{mark.index}}"
+                                 {{#if mark.checked}}checked{{/if}}
+                                 {{#unless ../../editable}}disabled{{/unless}}>
+                          <span></span>
+                        </label>
+                      {{/each}}
+
+                      <button type="button"
+                              class="arkhanval-ark-roll-button arkhanval-ark-roll-button--{{track.id}}"
+                              data-ark-action="{{track.id}}"
+                              aria-label="{{#if track.hasTable}}{{track.label}} — choisir une action{{else}}{{track.label}} — lancer les dés{{/if}}"
+                              title="{{track.label}} · {{#if track.hasTable}}Clic : choisir une action{{else}}Clic : jet{{/if}}">
+                        <img src="systems/arkhanval/assets/icones/ark/{{track.id}}.webp" alt="" aria-hidden="true">
+                      </button>
+                    </div>
+
+                    <div class="arkhanval-ark-unit__footer">
+                      <span class="arkhanval-die-index arkhanval-die-index--ark" aria-label="Repère {{track.displayIndex}}">
+                        <svg class="arkhanval-die-index__shape" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+                          <polygon points="11,1 21,8.2 17.2,20.5 4.8,20.5 1,8.2"></polygon>
+                        </svg>
+                        <span class="arkhanval-die-index__value">{{track.displayIndex}}</span>
+                      </span>
+                      <img class="arkhanval-ark-unit__title-image" src="systems/arkhanval/assets/sheets/page1/titre_{{track.id}}.webp" alt="{{track.label}}">
+                      <input class="arkhanval-overlay arkhanval-number-field arkhanval-ark-value arkhanval-ark-value--{{track.id}}"
+                             type="number"
+                             data-ark-rank="{{track.id}}"
+                             name="{{track.rankName}}"
+                             value="{{track.rankValue}}"
+                             aria-label="{{track.label}}"
+                             title="{{track.label}}"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </div>
+                  </article>
+                {{/each}}
+              </section>
+
+              <section class="arkhanval-wounds-panel" aria-label="{{localize "ARKHANVAL.Wounds.Title"}}">
+                <h3 class="arkhanval-wounds-panel__title">{{localize "ARKHANVAL.Wounds.Title"}}</h3>
+
+                {{#each woundTracks as |track|}}
+                  <div class="arkhanval-wounds-panel__group arkhanval-wounds-panel__group--{{track.id}}">
+                    <div class="arkhanval-wounds-panel__range">{{localize track.rangeKey}}</div>
+                    <div class="arkhanval-wounds-panel__label">{{localize track.labelKey}}</div>
+                    <div class="arkhanval-wound-track arkhanval-wound-track--{{track.id}}">
+                      {{#each track.marks as |mark|}}
+                        <label class="arkhanval-wound-mark" title="{{track.countCurrent}} / {{track.capacity}}" {{#unless mark.available}}hidden{{/unless}}>
+                          <input type="checkbox"
+                                 data-wound-severity="{{track.id}}"
+                                 data-wound-mark="{{mark.index}}"
+                                 {{#if mark.itemId}}data-wound-item-id="{{mark.itemId}}"{{/if}}
+                                 title="{{#if mark.itemId}}Maj+Clic : ouvrir la blessure{{else}}Ajouter une blessure{{/if}}"
+                                 {{#if mark.checked}}checked{{/if}}
+                                 {{#unless ../../editable}}disabled{{/unless}}>
+                          <span></span>
+                        </label>
+                      {{/each}}
+                    </div>
+                  </div>
+                {{/each}}
+
+                <div class="arkhanval-wounds-panel__stats">
+                  <label>
+                    <span>{{localize "ARKHANVAL.Fields.Armor"}}</span>
+                    <input class="arkhanval-overlay arkhanval-number-field arkhanval-wound-field arkhanval-wound-field--armor"
+                           type="text"
+                           value="{{wounds.armorDisplay}}"
+                           data-active-protection
+                           title="{{#if wounds.armorModifier}}Protection portée {{wounds.armor}}, modificateur {{wounds.armorModifier}}, protection effective {{wounds.armorEffective}}{{else}}Protection portée {{wounds.armor}}{{/if}}"
+                           aria-label="{{localize "ARKHANVAL.Fields.Armor"}}"
+                           readonly>
+                  </label>
+                  <label>
+                    <span>{{localize "ARKHANVAL.Fields.FDPenalty"}}</span>
+                    <input class="arkhanval-overlay arkhanval-number-field arkhanval-wound-field arkhanval-wound-field--fd-penalty"
+                           type="number"
+                           value="{{wounds.fdPenalty}}"
+                           aria-label="{{localize "ARKHANVAL.Fields.FDPenalty"}}"
+                           readonly>
+                  </label>
+                </div>
+              </section>
+
+              <section class="arkhanval-states-panel" aria-label="{{localize "ARKHANVAL.States.Title"}}">
+                <div class="arkhanval-states-panel__vanilla" aria-label="États courants">
+                  {{#each states as |state|}}
+                    <label class="arkhanval-state-toggle">
+                      <input class="arkhanval-state-toggle__native"
+                             type="checkbox"
+                             data-actor-state="{{state.id}}"
+                             {{#if state.checked}}checked{{/if}}
+                             {{#unless ../editable}}disabled{{/unless}}>
+                      <span class="arkhanval-state-toggle__check" aria-hidden="true"></span>
+                      <span class="arkhanval-state-toggle__label">{{state.label}}</span>
+                    </label>
+                  {{/each}}
+                </div>
+                <div class="arkhanval-states-panel__divider" aria-hidden="true"></div>
+                <div class="arkhanval-states-panel__custom" data-state-items-zone aria-label="Autres états">
+                  {{#each stateItems as |item|}}
+                    <button type="button"
+                            class="arkhanval-state-item"
+                            data-item-open
+                            data-item-id="{{item.id}}"
+                            title="{{item.name}}">
+                      {{item.name}}
+                    </button>
+                  {{/each}}
+                </div>
+                {{#if canManageStates}}
+                  <span class="arkhanval-states-panel__title arkhanval-states-panel__title--debug"
+                        data-state-manager-open
+                        role="button"
+                        tabindex="0"
+                        title="Afficher et gérer tous les états appliqués"
+                        aria-label="Afficher et gérer tous les états appliqués">
+                    {{localize "ARKHANVAL.States.Title"}}
+                  </span>
+                {{else}}
+                  <span class="arkhanval-states-panel__title">{{localize "ARKHANVAL.States.Title"}}</span>
+                {{/if}}
+              </section>
+            </aside>
+            <div class="arkhanval-archetype-column arkhanval-archetype-column--right">
+              {{#each archetypeColumns.right as |archetype|}}
+                <article class="arkhanval-archetype-card arkhanval-archetype-card--{{archetype.side}} arkhanval-archetype-card--{{archetype.id}}" data-archetype-id="{{archetype.id}}" style="--arkhanval-skill-row-count: {{archetype.skillRowCount}};">
+                  <header class="arkhanval-archetype-card__header">
+                    <div class="arkhanval-archetype-card__identity">
+                      <img class="arkhanval-archetype-card__icon"
+                           src="systems/arkhanval/assets/icones/archetype/{{archetype.id}}.webp"
+                           alt=""
+                           aria-hidden="true">
+                      <img class="arkhanval-archetype-card__title"
+                           src="systems/arkhanval/assets/sheets/page1/titre_{{archetype.id}}.webp"
+                           alt="{{archetype.label}}">
+                      <span class="arkhanval-die-index" aria-label="Repère {{archetype.displayIndex}}">
+                        <svg class="arkhanval-die-index__shape" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+                          <polygon points="11,1 21,8.2 17.2,20.5 4.8,20.5 1,8.2"></polygon>
+                        </svg>
+                        <span class="arkhanval-die-index__value">{{archetype.displayIndex}}</span>
+                      </span>
+                    </div>
+  
+                    <label class="arkhanval-archetype-xp">
+                      <span>XP</span>
+                      <input class="arkhanval-overlay arkhanval-number-field arkhanval-archetype-rank"
+                             type="number"
+                             name="{{archetype.xp.name}}"
+                             value="{{archetype.xp.value}}"
+                             aria-label="{{archetype.label}} - XP"
+                             title="{{archetype.label}} - XP"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                  </header>
+  
+                  <div class="arkhanval-skill-columns" aria-hidden="true">
+                    <span></span><span>Rang</span><span>XP</span>
+                  </div>
+  
+                  <div class="arkhanval-archetype-skills">
+                    {{#each archetype.skills as |skill|}}
+                      <div class="arkhanval-skill-row{{#if skill.isCustom}} arkhanval-skill-row--custom{{/if}}" data-skill-row-index="{{skill.index}}">
+                        <button class="arkhanval-skill-label{{#if skill.labelSize}} arkhanval-skill-label--{{skill.labelSize}}{{/if}} arkhanval-skill-action"
+                                type="button"
+                                data-skill-action
+                                data-skill-archetype="{{../id}}"
+                                data-skill-identifier="{{skill.identifier}}"
+                                data-skill-custom="{{skill.isCustom}}"
+                                {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}}
+                                aria-label="{{skill.itemName}} — {{#if skill.itemId}}{{localize "ARKHANVAL.Resolution.SkillClickHint"}}{{else}}{{localize "ARKHANVAL.Resolution.SkillClickHintRollOnly"}}{{/if}}">{{skill.itemName}}</button>
+                        <span class="arkhanval-skill-tooltip" role="tooltip" aria-hidden="true">
+                          <strong class="arkhanval-skill-tooltip__title">{{skill.itemName}}</strong>
+                          <span class="arkhanval-skill-tooltip__action">
+                            <span class="arkhanval-skill-tooltip__gesture"><span class="arkhanval-skill-tooltip__mouse" aria-hidden="true"><i class="fa-solid fa-computer-mouse"></i></span>Clic</span>
+                            <span class="arkhanval-skill-tooltip__arrow" aria-hidden="true">→</span>
+                            <span class="arkhanval-skill-tooltip__result">Préparer le jet</span>
+                          </span>
+                          <span class="arkhanval-skill-tooltip__action{{#unless skill.itemId}} arkhanval-skill-tooltip__action--unavailable{{/unless}}" data-skill-tooltip-detail {{#unless skill.itemId}}hidden{{/unless}}>
+                            <span class="arkhanval-skill-tooltip__gesture"><kbd>Maj</kbd><span aria-hidden="true">+</span><span class="arkhanval-skill-tooltip__mouse" aria-hidden="true"><i class="fa-solid fa-computer-mouse"></i></span>Clic</span>
+                            <span class="arkhanval-skill-tooltip__arrow" aria-hidden="true">→</span>
+                            <span class="arkhanval-skill-tooltip__result">Ouvrir la fiche</span>
+                          </span>
+                        </span>
+  
+                        <input class="arkhanval-overlay arkhanval-number-field arkhanval-skill-value"
+                               type="number"
+                               value="{{skill.rank}}"
+                               data-skill-field="rank"
+                               data-skill-archetype="{{../id}}"
+                               data-skill-identifier="{{skill.identifier}}"
+                               data-skill-name="{{skill.itemName}}"
+                               data-skill-custom="{{skill.isCustom}}"
+                               {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}}
+                               aria-label="{{archetype.label}} - compétence {{skill.index}} - valeur"
+                               title="{{archetype.label}} - compétence {{skill.index}} - valeur"
+                               {{#unless ../../editable}}disabled{{/unless}}>
+  
+                        <input class="arkhanval-overlay arkhanval-number-field arkhanval-skill-xp"
+                               type="number"
+                               value="{{skill.xp}}"
+                               data-skill-field="xp"
+                               data-skill-archetype="{{../id}}"
+                               data-skill-identifier="{{skill.identifier}}"
+                               data-skill-name="{{skill.itemName}}"
+                               data-skill-custom="{{skill.isCustom}}"
+                               {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}}
+                               aria-label="{{archetype.label}} - compétence {{skill.index}} - XP"
+                               title="{{archetype.label}} - compétence {{skill.index}} - XP"
+                               {{#unless ../../editable}}disabled{{/unless}}>
+                      </div>
+                    {{/each}}
+                  </div>
+                </article>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="arkhanval-specialties" aria-label="Spécialités">
+            <section class="arkhanval-specialties-block arkhanval-specialties-block--left">
+              <div class="arkhanval-specialties-heading arkhanval-specialties-heading--left">
+                <span>{{specialties.left.heading}}</span>
+                <small>(xp : 20 / 20 / 30)</small>
+              </div>
+              <div class="arkhanval-specialties-paper">
+                <div class="arkhanval-specialty-list" data-specialties-column="left">
+                  {{#each specialties.left.items as |item|}}
+                    <button type="button"
+                            class="arkhanval-specialty-item"
+                            data-item-open
+                            data-item-id="{{item.id}}"
+                            title="{{item.name}}">
+                      {{item.name}}
+                    </button>
+                  {{/each}}
+                </div>
+              </div>
+            </section>
+
+            <section class="arkhanval-specialties-block arkhanval-specialties-block--right">
+              <div class="arkhanval-specialties-heading arkhanval-specialties-heading--right">
+                <span>{{specialties.right.heading}}</span>
+                <small>(xp : 20 / 20 / 30)</small>
+              </div>
+              <div class="arkhanval-specialties-paper">
+                <div class="arkhanval-specialty-list" data-specialties-column="right">
+                  {{#each specialties.right.items as |item|}}
+                    <button type="button"
+                            class="arkhanval-specialty-item"
+                            data-item-open
+                            data-item-id="{{item.id}}"
+                            title="{{item.name}}">
+                      {{item.name}}
+                    </button>
+                  {{/each}}
+                </div>
+              </div>
+            </section>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab {{tabs.equipment.cssClass}}" data-group="sheet" data-tab="equipment">
+      <div class="arkhanval-sheet-page arkhanval-flex-page arkhanval-sheet-page-2" aria-label="{{localize "ARKHANVAL.Sheet.Pages.Equipment"}}">
+        <button type="button" class="arkhanval-advanced-lock" data-advanced-lock
+                aria-label="Déverrouiller la fiche" title="Déverrouiller la fiche"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-lock" aria-hidden="true"></i>
+        </button>
+
+        <div class="arkhanval-flex-header" aria-hidden="true">
+          <img class="arkhanval-sheet-logo arkhanval-sheet-logo--flow"
+               src="systems/arkhanval/assets/sheets/common/logo_arkhanval.webp"
+               alt="">
+        </div>
+        <div class="arkhanval-flow-content">
+          <div class="arkhanval-page2-top">
+            <section class="arkhanval-paper-block arkhanval-paper-block--appearance">
+              <h3>{{localize "ARKHANVAL.Fields.Appearance"}}</h3>
+              <div class="arkhanval-richtext arkhanval-character-richtext-field arkhanval-character-richtext-field--appearance">
+                {{formInput systemFields.identity.fields.appearance
+                  value=page2.appearance.value
+                  enriched=enriched.appearance
+                  name=page2.appearance.name
+                  toggled=editable
+                  disabled=readOnly
+                }}
+              </div>
+            </section>
+
+            <section class="arkhanval-paper-block arkhanval-paper-block--wealth">
+              <h3>{{localize "ARKHANVAL.Fields.Wealth"}}</h3>
+              <div class="arkhanval-wealth-grid">
+                <label>
+                  <span>{{localize "ARKHANVAL.Wealth.Electrum"}}</span>
+                  <input type="number" min="0" name="{{page2.wealth.electrum.name}}" value="{{page2.wealth.electrum.value}}" {{#unless editable}}disabled{{/unless}}>
+                </label>
+                <label>
+                  <span>{{localize "ARKHANVAL.Wealth.Deniers"}}</span>
+                  <input type="number" min="0" name="{{page2.wealth.deniers.name}}" value="{{page2.wealth.deniers.value}}" {{#unless editable}}disabled{{/unless}}>
+                </label>
+                <label>
+                  <span>{{localize "ARKHANVAL.Wealth.Sous"}}</span>
+                  <input type="number" min="0" name="{{page2.wealth.sous.name}}" value="{{page2.wealth.sous.value}}" {{#unless editable}}disabled{{/unless}}>
+                </label>
+              </div>
+            </section>
+          </div>
+
+          <section class="arkhanval-paper-block arkhanval-dynamic-zone arkhanval-combat-gear-zone" aria-label="Armes et armures">
+            <div class="arkhanval-combat-gear">
+              <section class="arkhanval-combat-gear__group arkhanval-combat-gear__group--weapons" data-item-container="weapons">
+                <div class="arkhanval-combat-gear__heading">
+                  <h4 class="arkhanval-combat-gear__title">{{localize "ARKHANVAL.Fields.Weapons"}}</h4>
+                  {{#if editable}}
+                    <button type="button" class="arkhanval-item-add arkhanval-combat-gear__add" data-item-create data-item-type="weapon" data-item-name="{{localize "ARKHANVAL.Sheet.Add.WeaponName"}}" title="{{localize "ARKHANVAL.Sheet.Add.Weapon"}}" aria-label="{{localize "ARKHANVAL.Sheet.Add.Weapon"}}">
+                      <i class="fa-solid fa-plus arkhanval-item-add__icon" aria-hidden="true"></i>
+                    </button>
+                  {{/if}}
+                </div>
+                <div class="arkhanval-item-summary-list arkhanval-weapon-groups">
+                  {{#each page2.weaponGroups as |group|}}
+                    <section class="arkhanval-weapon-group" data-weapon-family="{{group.id}}">
+                      <h4>{{group.label}}</h4>
+                      {{#each group.items as |item|}}
+                        <article class="arkhanval-item-summary arkhanval-weapon-summary" data-item-id="{{item.id}}">
+                          <span class="arkhanval-weapon-summary__icon">
+                            {{#if item.img}}
+                              <img src="{{item.img}}" alt="">
+                            {{else}}
+                              <i class="fa-solid fa-sword" aria-hidden="true"></i>
+                            {{/if}}
+                          </span>
+                          <button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                          {{#if item.damage}}
+                            <span class="arkhanval-weapon-summary__damage">({{item.damage}})</span>
+                          {{/if}}
+                        </article>
+                      {{/each}}
+                    </section>
+                  {{else}}
+                    <p class="arkhanval-empty-state">{{localize "ARKHANVAL.Sheet.Empty.Weapons"}}</p>
+                  {{/each}}
+                </div>
+              </section>
+
+              <section class="arkhanval-combat-gear__group arkhanval-combat-gear__group--armors" data-item-container="armors">
+                <div class="arkhanval-combat-gear__heading">
+                  <h4 class="arkhanval-combat-gear__title">Armures &amp; protection</h4>
+                  {{#if editable}}
+                    <button type="button" class="arkhanval-item-add arkhanval-combat-gear__add" data-item-create data-item-type="armor" data-item-name="{{localize "ARKHANVAL.Sheet.Add.ArmorName"}}" title="{{localize "ARKHANVAL.Sheet.Add.Armor"}}" aria-label="{{localize "ARKHANVAL.Sheet.Add.Armor"}}">
+                      <i class="fa-solid fa-plus arkhanval-item-add__icon" aria-hidden="true"></i>
+                    </button>
+                  {{/if}}
+                </div>
+
+                <div class="arkhanval-armor-list">
+                  <div class="arkhanval-armor-list__head" aria-hidden="true">
+                    <span>Nom</span>
+                    <span>Base</span>
+                    <span>Actuelle</span>
+                    <span>Équipés</span>
+                  </div>
+
+                  {{#each page2.armors as |item|}}
+                    {{#if item.groupSeparatorBefore}}
+                      <div class="arkhanval-armor-list__separator" aria-hidden="true"></div>
+                    {{/if}}
+                    <article class="arkhanval-armor-summary {{#unless item.equipped}}arkhanval-armor-summary--unequipped{{/unless}}" data-item-id="{{item.id}}">
+                      <img class="arkhanval-armor-summary__icon" src="{{item.img}}" alt="">
+                      <button type="button"
+                              class="arkhanval-item-link arkhanval-armor-summary__name"
+                              data-item-open
+                              data-item-id="{{item.id}}">
+                        {{item.name}}
+                      </button>
+
+                      <span class="arkhanval-armor-summary__base">{{item.protectionBase}}</span>
+
+                      <input class="arkhanval-armor-summary__current"
+                             type="number"
+                             min="0"
+                             value="{{item.protectionCurrent}}"
+                             data-item-id="{{item.id}}"
+                             data-item-field="protection.current"
+                             data-item-value-type="number"
+                             aria-label="Protection actuelle de {{item.name}}"
+                             {{#unless ../editable}}disabled{{/unless}}>
+
+                      <label class="arkhanval-armor-summary__equipped" title="Armure portée">
+                        <input class="arkhanval-item-tags__native-check"
+                               type="checkbox"
+                               data-item-id="{{item.id}}"
+                               data-item-field="equipped"
+                               data-item-value-type="boolean"
+                               {{#if item.equipped}}checked{{/if}}
+                               {{#unless ../editable}}disabled{{/unless}}>
+                        <span class="arkhanval-item-tags__check" aria-hidden="true"></span>
+                      </label>
+                    </article>
+                  {{else}}
+                    <p class="arkhanval-empty-state">Aucune armure possédée.</p>
+                  {{/each}}
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="arkhanval-paper-block arkhanval-dynamic-zone arkhanval-ark-traits-zone" data-item-container="arks-notes" aria-label="Arksonge et Arkentropie">
+            <div class="arkhanval-ark-traits">
+              {{#each page2.arkTraitGroups as |group|}}
+                <section class="arkhanval-ark-trait-group arkhanval-ark-trait-group--{{group.id}}">
+                  <h4 class="arkhanval-ark-trait-group__title">{{group.label}}</h4>
+                  <div class="arkhanval-ark-trait-list">
+                    {{#each group.items as |item|}}
+                      <article class="arkhanval-ark-trait-row" data-item-id="{{item.id}}">
+                        <img class="arkhanval-page2-item-icon" src="{{item.img}}" alt="">
+                        <button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                      </article>
+                    {{else}}
+                      <span class="arkhanval-empty-state">Aucun Trait acquis.</span>
+                    {{/each}}
+                  </div>
+                </section>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="arkhanval-paper-block arkhanval-dynamic-zone arkhanval-work-zone" data-item-container="works">
+            <h3>{{localize "ARKHANVAL.Fields.Works"}}</h3>
+            {{#if editable}}
+              <button type="button" class="arkhanval-item-add" data-item-create data-item-type="work" data-item-name="{{localize "ARKHANVAL.Sheet.Add.WorkName"}}" title="{{localize "ARKHANVAL.Sheet.Add.Work"}}" aria-label="{{localize "ARKHANVAL.Sheet.Add.Work"}}">
+                <i class="fa-solid fa-plus arkhanval-item-add__icon" aria-hidden="true"></i>
+              </button>
+            {{/if}}
+            <div class="arkhanval-work-list arkhanval-page2-split-list">
+              {{#if page2.hasActiveWorks}}
+                <div class="arkhanval-page2-active-list" aria-label="Travaux en cours">
+                  {{#each page2.activeWorks as |item|}}
+                    <article class="arkhanval-work-row arkhanval-work-row--active" data-item-id="{{item.id}}">
+                      <img class="arkhanval-page2-item-icon" src="{{item.img}}" alt="">
+                      <div class="arkhanval-page2-active-main">
+                        <button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                        <span class="arkhanval-page2-active-status">En cours</span>
+                      </div>
+                      <strong class="arkhanval-page2-active-progress">{{item.progressLabel}}</strong>
+                      <div class="arkhanval-advanced-progress-edit" aria-label="Éditer l'avancement du travail">
+                        <label>Actuel <input type="number" min="0" max="99999" step="1" value="{{item.current}}"
+                          data-item-id="{{item.id}}" data-advanced-work-edit="current" disabled></label>
+                        <label>Objectif <input type="number" min="0" max="99999" step="1" value="{{item.target}}"
+                          data-item-id="{{item.id}}" data-advanced-work-edit="target" disabled></label>
+                      </div>
+                      <button type="button" class="arkhanval-work-row__action" data-work-progress data-item-id="{{item.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                        <i class="fa-solid fa-dice-d10" aria-hidden="true"></i>
+                        Faire progresser
+                      </button>
+                    </article>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+              {{#if page2.hasActiveAndCompletedWorks}}
+                <div class="arkhanval-page2-list-separator" aria-hidden="true"></div>
+              {{/if}}
+
+              {{#if page2.hasCompletedWorks}}
+                <div class="arkhanval-page2-completed-list" aria-label="Travaux terminés">
+                  {{#each page2.completedWorks as |item|}}
+                    <article class="arkhanval-page2-simple-row arkhanval-work-row--completed" data-item-id="{{item.id}}">
+                      <img class="arkhanval-page2-item-icon" src="{{item.img}}" alt="">
+                      <button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                    </article>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+              {{#unless page2.hasWorks}}
+                <p class="arkhanval-empty-state">{{localize "ARKHANVAL.Sheet.Empty.Works"}}</p>
+              {{/unless}}
+            </div>
+          </section>
+
+          <section class="arkhanval-paper-block arkhanval-dynamic-zone arkhanval-possession-zone" data-item-container="possessions">
+            <h3>{{localize "ARKHANVAL.Fields.Possessions"}}</h3>
+            {{#if editable}}
+              <button type="button" class="arkhanval-item-add" data-item-create data-item-type="equipment" data-item-name="{{localize "ARKHANVAL.Sheet.Add.PossessionName"}}" title="{{localize "ARKHANVAL.Sheet.Add.Possession"}}" aria-label="{{localize "ARKHANVAL.Sheet.Add.Possession"}}">
+                <i class="fa-solid fa-plus arkhanval-item-add__icon" aria-hidden="true"></i>
+              </button>
+            {{/if}}
+            <div class="arkhanval-possession-list arkhanval-possession-grid">
+              {{#each page2.possessions as |item|}}
+                <article class="arkhanval-possession-row" data-item-id="{{item.id}}">
+                  <img class="arkhanval-page2-item-icon" src="{{item.img}}" alt="">
+                  <button type="button" class="arkhanval-item-link arkhanval-possession-row__name" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                  <input class="arkhanval-possession-row__quantity"
+                         type="number"
+                         min="0"
+                         value="{{item.quantity}}"
+                         data-item-id="{{item.id}}"
+                         data-item-field="quantity"
+                         data-item-value-type="number"
+                         aria-label="Quantité de {{item.name}}"
+                         {{#unless ../editable}}disabled{{/unless}}>
+                </article>
+              {{else}}
+                <p class="arkhanval-empty-state">{{localize "ARKHANVAL.Sheet.Empty.Possessions"}}</p>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="arkhanval-paper-block arkhanval-dynamic-zone arkhanval-library-zone" data-item-container="library">
+            <h3>{{localize "ARKHANVAL.Fields.Library"}}</h3>
+            {{#if editable}}
+              <button type="button" class="arkhanval-item-add" data-item-create data-item-type="book" data-item-name="{{localize "ARKHANVAL.Sheet.Add.BookName"}}" title="{{localize "ARKHANVAL.Sheet.Add.Book"}}" aria-label="{{localize "ARKHANVAL.Sheet.Add.Book"}}">
+                <i class="fa-solid fa-plus arkhanval-item-add__icon" aria-hidden="true"></i>
+              </button>
+            {{/if}}
+            <div class="arkhanval-library-list arkhanval-page2-split-list">
+              {{#if page2.hasActiveLibrary}}
+                <div class="arkhanval-page2-active-list" aria-label="Lectures en cours">
+                  {{#each page2.activeLibrary as |item|}}
+                    <article class="arkhanval-library-row arkhanval-library-row--active" data-item-id="{{item.id}}">
+                      <img class="arkhanval-page2-item-icon" src="{{item.img}}" alt="">
+                      <div class="arkhanval-page2-active-main">
+                        <button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                        <span class="arkhanval-page2-active-status">En cours</span>
+                      </div>
+                      <strong class="arkhanval-page2-active-progress">{{item.progressLabel}}</strong>
+                      <button type="button" class="arkhanval-library-row__action" data-book-read data-item-id="{{item.id}}" {{#unless ../editable}}disabled{{/unless}} title="Faire progresser la lecture" aria-label="Faire progresser la lecture de {{item.name}}">
+                        <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                        Lire
+                      </button>
+                    </article>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+              {{#if page2.hasActiveAndCompletedLibrary}}
+                <div class="arkhanval-page2-list-separator" aria-hidden="true"></div>
+              {{/if}}
+
+              {{#if page2.hasCompletedLibrary}}
+                <div class="arkhanval-page2-completed-list" aria-label="Livres lus">
+                  {{#each page2.completedLibrary as |item|}}
+                    <article class="arkhanval-page2-simple-row arkhanval-library-row--completed" data-item-id="{{item.id}}">
+                      <img class="arkhanval-page2-item-icon" src="{{item.img}}" alt="">
+                      <div class="arkhanval-page2-active-main">
+                        <button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>
+                        <span class="arkhanval-page2-active-status">Terminé</span>
+                      </div>
+                    </article>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+              {{#unless page2.hasLibrary}}
+                <p class="arkhanval-empty-state">{{localize "ARKHANVAL.Sheet.Empty.Library"}}</p>
+              {{/unless}}
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab {{tabs.spells.cssClass}}" data-group="sheet" data-tab="spells">
+      <div class="arkhanval-sheet-page arkhanval-flex-page arkhanval-sheet-page-3" aria-label="{{localize "ARKHANVAL.Sheet.Pages.Spells"}}">
+        <button type="button" class="arkhanval-advanced-lock" data-advanced-lock
+                aria-label="Déverrouiller la fiche" title="Déverrouiller la fiche"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-lock" aria-hidden="true"></i>
+        </button>
+
+        <div class="arkhanval-flex-header" aria-hidden="true">
+          <img class="arkhanval-sheet-logo arkhanval-sheet-logo--flow"
+               src="systems/arkhanval/assets/sheets/common/logo_arkhanval.webp"
+               alt="">
+        </div>
+        <div class="arkhanval-flow-content">
+          <div class="arkhanval-spell-zone">
+            {{#if editable}}
+              <button type="button" class="arkhanval-item-add arkhanval-item-add--spells" data-item-create data-item-type="spell" data-item-name="{{localize "ARKHANVAL.Sheet.Add.SpellName"}}" title="{{localize "ARKHANVAL.Sheet.Add.Spell"}}" aria-label="{{localize "ARKHANVAL.Sheet.Add.Spell"}}">
+                <i class="fa-solid fa-plus arkhanval-item-add__icon" aria-hidden="true"></i>
+              </button>
+            {{/if}}
+            <div class="arkhanval-spell-list" data-item-container="spells">
+            {{#each spells as |spell|}}
+              <article class="arkhanval-spell-card {{#if spell.collapsed}}is-collapsed{{/if}}" data-item-id="{{spell.id}}">
+                <div class="arkhanval-spell-card-heading">
+                  <span class="arkhanval-spell-index"><span>{{spell.index}}</span></span>
+                  <label>
+                    <span>{{localize "ARKHANVAL.SpellFields.Name"}}</span>
+                    <button type="button" class="arkhanval-item-link arkhanval-item-link--spell" data-item-open data-item-id="{{spell.id}}">{{spell.name}}</button>
+                  </label>
+                  <div class="arkhanval-spell-collapsed-actions" aria-label="État du sortilège">
+                    {{#if spell.incantation}}
+                      <span class="arkhanval-spell-collapsed-status {{#if spell.incantation.ready}}is-ready{{/if}} {{#if spell.incantation.negative}}is-negative{{/if}}">
+                        {{spell.incantation.progressLabel}}{{#if spell.incantation.ready}} · {{localize "ARKHANVAL.Magic.Ready"}}{{/if}}
+                      </span>
+                      {{#if spell.incantation.ready}}
+                        <button type="button" data-spell-incantation-release data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-burst" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.Release"}}
+                        </button>
+                        <button type="button" data-spell-incantation-maintain data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-hand" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.Maintain"}}
+                        </button>
+                      {{else}}
+                        <button type="button" data-spell-incantation-roll data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-dice-d10" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.Incant"}}
+                        </button>
+                        <button type="button" data-spell-incantation-release data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-burst" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.Release"}}
+                        </button>
+                      {{/if}}
+                      <button type="button" data-spell-incantation-cancel data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        {{localize "ARKHANVAL.Magic.Cancel"}}
+                      </button>
+                    {{else if spell.isLearning}}
+                      <span class="arkhanval-spell-collapsed-status is-learning">
+                        {{localize "ARKHANVAL.Magic.Learning"}} · {{spell.learningProgressLabel}}
+                      </span>
+                    {{else}}
+                      <button type="button" data-spell-incantation-start data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                        <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        {{localize "ARKHANVAL.Magic.StartIncantation"}}
+                      </button>
+                    {{/if}}
+                  </div>
+                  <button type="button"
+                          class="arkhanval-spell-toggle"
+                          data-spell-toggle
+                          data-item-id="{{spell.id}}"
+                          aria-expanded="{{#if spell.collapsed}}false{{else}}true{{/if}}"
+                          title="{{#if spell.collapsed}}{{localize "ARKHANVAL.SpellFields.ShowDetails"}}{{else}}{{localize "ARKHANVAL.SpellFields.HideDetails"}}{{/if}}">
+                    <i class="fa-solid fa-chevron-down arkhanval-spell-toggle__icon" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+                <div class="arkhanval-spell-details" data-spell-details {{#if spell.collapsed}}hidden{{/if}}>
+                  {{#if spell.isLearning}}
+                    <section class="arkhanval-spell-learning">
+                      <div class="arkhanval-spell-learning__summary">
+                        <span>{{localize "ARKHANVAL.Magic.Learning"}}</span>
+                        <strong>{{spell.learningProgressLabel}}</strong>
+                      </div>
+                      <progress class="arkhanval-spell-learning__progress" value="{{spell.learningProgressValue}}" max="{{spell.learningProgressMax}}"></progress>
+                      <div class="arkhanval-spell-learning__fields">
+                        <label>
+                          <span>{{localize "ARKHANVAL.Magic.LearningXp"}}</span>
+                          <input type="number" min="0" value="{{spell.learningXp}}"
+                                 data-item-id="{{spell.id}}" data-item-field="learningXp" data-item-value-type="number"
+                                 {{#unless ../editable}}disabled{{/unless}}>
+                        </label>
+                        <label>
+                          <span>{{localize "ARKHANVAL.Magic.LearningTarget"}}</span>
+                          <input type="number" min="0" value="{{spell.learningTarget}}"
+                                 data-item-id="{{spell.id}}" data-item-field="learningTarget" data-item-value-type="number"
+                                 {{#unless ../editable}}disabled{{/unless}}>
+                        </label>
+                        <button type="button"
+                                class="arkhanval-spell-learning__master"
+                                data-spell-learning-master
+                                data-item-id="{{spell.id}}"
+                                title="{{#if spell.canMaster}}Le seuil d’apprentissage est atteint.{{else}}Disponible lorsque l’XP d’apprentissage requis est atteint.{{/if}}"
+                                {{#unless spell.canMaster}}disabled{{/unless}}
+                                {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-check" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.MarkMastered"}}
+                        </button>
+                      </div>
+                    </section>
+                  {{/if}}
+
+                  <div class="arkhanval-spell-metrics">
+                    <label class="arkhanval-spell-metric-wide">
+                      <span>{{localize "ARKHANVAL.SpellFields.RequiredSkill"}}</span>
+                      <select class="arkhanval-spell-skill-select" data-item-id="{{spell.id}}" data-item-field="castingSkill" {{#unless ../editable}}disabled{{/unless}}>
+                        {{#each spell.castingSkillOptions as |option|}}
+                          <option value="{{option.identifier}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                        {{/each}}
+                      </select>
+                    </label>
+                    <label>
+                      <span>{{localize "ARKHANVAL.SpellFields.MagicPoints"}}</span>
+                      <input type="number" min="0" value="{{spell.magicPoints}}"
+                             data-item-id="{{spell.id}}" data-item-field="magicPoints" data-item-value-type="number"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                    <label>
+                      <span>{{localize "ARKHANVAL.SpellFields.FD"}}</span>
+                      <input type="number" min="0" value="{{spell.fd}}"
+                             data-item-id="{{spell.id}}" data-item-field="fd" data-item-value-type="number"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                    <label>
+                      <span>{{localize "ARKHANVAL.SpellFields.Range"}}</span>
+                      <input type="text" value="{{spell.range}}"
+                             data-item-id="{{spell.id}}" data-item-field="range"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                    <label>
+                      <span>{{localize "ARKHANVAL.SpellFields.Area"}}</span>
+                      <input type="text" value="{{spell.area}}"
+                             data-item-id="{{spell.id}}" data-item-field="area"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                    <label>
+                      <span>{{localize "ARKHANVAL.SpellFields.Duration"}}</span>
+                      <input type="text" value="{{spell.duration}}"
+                             data-item-id="{{spell.id}}" data-item-field="duration"
+                             {{#unless ../editable}}disabled{{/unless}}>
+                    </label>
+                  </div>
+
+                  {{#if spell.incantation}}
+                    <section class="arkhanval-incantation-block {{#if spell.incantation.ready}}is-ready{{/if}} {{#if spell.incantation.negative}}is-negative{{/if}}">
+                      <div class="arkhanval-incantation-block__summary">
+                        <span class="arkhanval-incantation-block__label">{{localize "ARKHANVAL.Magic.Incantation"}}</span>
+                        <strong class="arkhanval-incantation-block__progress">{{spell.incantation.progressLabel}}</strong>
+                        <div class="arkhanval-advanced-progress-edit" aria-label="Éditer la progression de l'incantation">
+                          <label>Actuel <input type="number" min="-99999" max="99999" step="1"
+                            value="{{spell.incantation.total}}" data-item-id="{{spell.id}}"
+                            data-advanced-incantation-edit="total" disabled></label>
+                          <label>Objectif <input type="number" min="0" max="99999" step="1"
+                            value="{{spell.incantation.target}}" data-item-id="{{spell.id}}"
+                            data-advanced-incantation-edit="target" disabled></label>
+                        </div>
+                        {{#if spell.incantation.ready}}
+                          <span class="arkhanval-incantation-block__status">{{localize "ARKHANVAL.Magic.Ready"}}</span>
+                        {{else if spell.incantation.negative}}
+                          <span class="arkhanval-incantation-block__status">{{localize "ARKHANVAL.Magic.Negative"}}</span>
+                        {{else}}
+                          <span class="arkhanval-incantation-block__status">{{localize "ARKHANVAL.Magic.Channeling"}}</span>
+                        {{/if}}
+                      </div>
+                      <div class="arkhanval-incantation-block__actions">
+                        {{#unless spell.incantation.ready}}
+                          <button type="button" data-spell-incantation-roll data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                            <i class="fa-solid fa-dice-d10" aria-hidden="true"></i>
+                            {{localize "ARKHANVAL.Magic.Incant"}}
+                          </button>
+                        {{/unless}}
+                        <button type="button" data-spell-incantation-release data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-burst" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.Release"}}
+                        </button>
+                        {{#if spell.incantation.ready}}
+                          <button type="button" data-spell-incantation-maintain data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                            <i class="fa-solid fa-hand" aria-hidden="true"></i>
+                            {{localize "ARKHANVAL.Magic.Maintain"}}
+                          </button>
+                        {{/if}}
+                        <button type="button" data-spell-incantation-cancel data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                          {{localize "ARKHANVAL.Magic.Cancel"}}
+                        </button>
+                      </div>
+                    </section>
+                  {{else if spell.isMastered}}
+                    <div class="arkhanval-incantation-start">
+                      <button type="button" data-spell-incantation-start data-item-id="{{spell.id}}" {{#unless ../editable}}disabled{{/unless}}>
+                        <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        {{localize "ARKHANVAL.Magic.StartIncantation"}}
+                      </button>
+                    </div>
+                  {{/if}}
+
+                  <label class="arkhanval-spell-description-field arkhanval-richtext">
+                    <span>{{localize "ARKHANVAL.SpellFields.Description"}}</span>
+                    {{formInput spell.descriptionField
+                      value=spell.description
+                      enriched=spell.enrichedDescription
+                      name=spell.descriptionInputName
+                      named=false
+                      dataset=spell.descriptionDataset
+                      documentUUID=spell.uuid
+                      collaborate=false
+                      toggled=../editable
+                      disabled=../readOnly
+                    }}
+                  </label>
+                </div>
+              </article>
+            {{else}}
+              <p class="arkhanval-empty-state">{{localize "ARKHANVAL.Sheet.Empty.Spells"}}</p>
+            {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab {{tabs.progression.cssClass}}" data-group="sheet" data-tab="progression">
+      <div class="arkhanval-sheet-page arkhanval-sheet-page-4 arkhanval-progression-page" aria-label="Progression">
+        <img class="arkhanval-sheet-logo arkhanval-sheet-logo--progression"
+             src="systems/arkhanval/assets/sheets/common/logo_arkhanval.webp"
+             alt=""
+             aria-hidden="true">
+        <div class="arkhanval-progression-page__content">
+          {{{progressionHtml}}}
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,211 @@
+
+<div class="arkhanval-art-combat__layout{{#unless isGM}} arkhanval-art-combat__layout--readonly{{/unless}}">
+  {{#if isGM}}
+  <section class="arkhanval-art-combat__builder">
+    <header class="arkhanval-art-combat__section-header">
+      <h2>Nouvelle confrontation</h2>
+    </header>
+
+    <div class="arkhanval-art-combat__camp-grid">
+      <div class="arkhanval-art-combat__drop-zone" data-art-camp-drop="A">
+        <strong>Camp A</strong>
+        {{#if draftA.length}}
+          <div class="arkhanval-art-combat__draft-list">
+            {{#each draftA as |actor|}}
+              <article class="arkhanval-art-combat__draft-actor"
+                       draggable="{{#if ../isGM}}true{{else}}false{{/if}}"
+                       data-draft-actor="{{actor.actorId}}"
+                       data-camp="A">
+                <img src="{{actor.img}}" alt="">
+                <span>{{actor.name}}</span>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <p>Déposez ici les personnages du camp A.</p>
+        {{/if}}
+      </div>
+
+      <div class="arkhanval-art-combat__drop-zone" data-art-camp-drop="B">
+        <strong>Camp B</strong>
+        {{#if draftB.length}}
+          <div class="arkhanval-art-combat__draft-list">
+            {{#each draftB as |actor|}}
+              <article class="arkhanval-art-combat__draft-actor"
+                       draggable="{{#if ../isGM}}true{{else}}false{{/if}}"
+                       data-draft-actor="{{actor.actorId}}"
+                       data-camp="B">
+                <img src="{{actor.img}}" alt="">
+                <span>{{actor.name}}</span>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <p>Déposez ici les personnages du camp B.</p>
+        {{/if}}
+      </div>
+    </div>
+
+    {{#if isGM}}
+      <button type="button"
+              class="arkhanval-art-combat__resolve"
+              data-action="resolve"
+              {{#unless canResolve}}disabled{{/unless}}>
+        Résoudre Art du combat
+      </button>
+      <small class="arkhanval-art-combat__builder-hint">
+        Glissez un personnage d’un camp à l’autre pour le déplacer. Déposez-le hors des deux camps pour le retirer de la préparation.
+      </small>
+    {{/if}}
+  </section>
+
+  {{/if}}
+
+  <section class="arkhanval-art-combat__registry">
+    <header class="arkhanval-art-combat__brand">
+      <img src="systems/arkhanval/assets/icones/art-combat/credit-relance.webp"
+           alt=""
+           class="arkhanval-art-combat__brand-icon">
+      <div class="arkhanval-art-combat__brand-copy">
+        <strong>Art du combat</strong>
+        <small>Suivi des confrontations et crédits de relance</small>
+      </div>
+    </header>
+
+    {{#if isGM}}
+      <div class="arkhanval-art-combat__round-control">
+        <div class="arkhanval-art-combat__round-actions">
+          <button type="button"
+                  class="arkhanval-art-combat__next-round"
+                  data-action="nextRound">
+            {{nextRoundLabel}}
+          </button>
+          {{#if hasActiveCombat}}
+          <button type="button"
+                  class="arkhanval-art-combat__end-combat"
+                  data-action="endCombat">
+            Terminer le combat
+          </button>
+          {{/if}}
+        </div>
+        <span class="arkhanval-art-combat__round-status">{{roundStatus}}</span>
+        <small>Ne passez au round suivant que lorsque toutes les confrontations en cours ont été résolues.</small>
+      </div>
+    {{/if}}
+
+    <header class="arkhanval-art-combat__section-header">
+      <h2>Confrontations actives</h2>
+    </header>
+
+    {{#if confrontations.length}}
+      <div class="arkhanval-art-combat__confrontations">
+        {{#each confrontations as |confrontation|}}
+          <div class="arkhanval-art-combat__confrontation-row">
+          <article class="arkhanval-art-combat__confrontation">
+            <div class="arkhanval-art-combat__confrontation-title">
+              <strong>Confrontation {{confrontation.displayIndex}}</strong>
+              {{#if confrontation.waiting}}<span>Jets en attente</span>{{else}}<span>Art du combat établi</span>{{/if}}
+            </div>
+
+            <div class="arkhanval-art-combat__confrontation-body">
+              <div class="arkhanval-art-combat__confrontation-camp{{confrontation.campAClass}}">
+                <div class="arkhanval-art-combat__camp-heading">
+                  <span class="arkhanval-art-combat__camp-label">Camp A</span>
+                  <span class="arkhanval-art-combat__credit-heading">Crédits de relance</span>
+                </div>
+                {{#each confrontation.campA as |participant|}}
+                  <div class="arkhanval-art-combat__participant">
+                    <img src="{{participant.img}}" alt="">
+                    <span class="arkhanval-art-combat__participant-name">{{participant.name}} <small>(QR : {{participant.qrDisplay}})</small></span>
+                    <div class="arkhanval-art-combat__credit"
+                         title="{{participant.credit}} crédit(s) de relance">
+                      <span class="arkhanval-art-combat__credit-value">
+                        <strong>{{participant.credit}}</strong>
+                        <img src="systems/arkhanval/assets/icones/art-combat/credit-relance.webp"
+                             alt=""
+                             class="arkhanval-art-credit-icon arkhanval-art-credit-icon--count">
+                      </span>
+                      {{#if ../../isGM}}
+                        <span class="arkhanval-art-combat__credit-controls">
+                          <button type="button"
+                                  data-action="creditUp"
+                                  data-confrontation-id="{{confrontation.id}}"
+                                  data-actor-id="{{participant.actorId}}"
+                                  title="Ajouter un crédit de relance"
+                                  {{#unless participant.canIncrease}}disabled{{/unless}}>+</button>
+                          <button type="button"
+                                  data-action="creditDown"
+                                  data-confrontation-id="{{confrontation.id}}"
+                                  data-actor-id="{{participant.actorId}}"
+                                  title="Retirer un crédit de relance"
+                                  {{#unless participant.canDecrease}}disabled{{/unless}}>−</button>
+                        </span>
+                      {{/if}}
+                    </div>
+                  </div>
+                {{/each}}
+              </div>
+
+              <div class="arkhanval-art-combat__confrontation-divider" aria-hidden="true"></div>
+
+              <div class="arkhanval-art-combat__confrontation-camp{{confrontation.campBClass}}">
+                <div class="arkhanval-art-combat__camp-heading">
+                  <span class="arkhanval-art-combat__camp-label">Camp B</span>
+                  <span class="arkhanval-art-combat__credit-heading">Crédits de relance</span>
+                </div>
+                {{#each confrontation.campB as |participant|}}
+                  <div class="arkhanval-art-combat__participant">
+                    <img src="{{participant.img}}" alt="">
+                    <span class="arkhanval-art-combat__participant-name">{{participant.name}} <small>(QR : {{participant.qrDisplay}})</small></span>
+                    <div class="arkhanval-art-combat__credit"
+                         title="{{participant.credit}} crédit(s) de relance">
+                      <span class="arkhanval-art-combat__credit-value">
+                        <strong>{{participant.credit}}</strong>
+                        <img src="systems/arkhanval/assets/icones/art-combat/credit-relance.webp"
+                             alt=""
+                             class="arkhanval-art-credit-icon arkhanval-art-credit-icon--count">
+                      </span>
+                      {{#if ../../isGM}}
+                        <span class="arkhanval-art-combat__credit-controls">
+                          <button type="button"
+                                  data-action="creditUp"
+                                  data-confrontation-id="{{confrontation.id}}"
+                                  data-actor-id="{{participant.actorId}}"
+                                  title="Ajouter un crédit de relance"
+                                  {{#unless participant.canIncrease}}disabled{{/unless}}>+</button>
+                          <button type="button"
+                                  data-action="creditDown"
+                                  data-confrontation-id="{{confrontation.id}}"
+                                  data-actor-id="{{participant.actorId}}"
+                                  title="Retirer un crédit de relance"
+                                  {{#unless participant.canDecrease}}disabled{{/unless}}>−</button>
+                        </span>
+                      {{/if}}
+                    </div>
+                  </div>
+                {{/each}}
+              </div>
+
+            </div>
+          </article>
+          {{#if ../isGM}}
+            <div class="arkhanval-art-combat__delete-separator" aria-hidden="true"></div>
+            <button type="button"
+                    class="arkhanval-art-combat__delete"
+                    data-action="deleteConfrontation"
+                    data-confrontation-id="{{confrontation.id}}"
+                    title="Supprimer la confrontation"
+                    aria-label="Supprimer la confrontation">
+              <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+            </button>
+          {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="arkhanval-art-combat__empty">
+        Aucune confrontation Art du combat active.
+      </div>
+    {{/if}}
+  </section>
+</div>

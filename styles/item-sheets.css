@@ -1,0 +1,536 @@
+/* correction: only Item sheets; one shared sizing/layout contract. */
+.arkhanval-item-sheet {
+  --ark-item-gap: 12px;
+  --ark-item-padding: 14px;
+  --ark-item-icon-size: 132px;
+  --ark-item-main-width: 650px;
+  --ark-item-toggle-width: 40px;
+  --ark-item-sidebar-width: 300px;
+  --ark-item-sidebar-gap: 10px;
+  --ark-item-blue: #245776;
+  --ark-item-blue-hover: #306e91;
+  --ark-item-red: var(--arkhanval-color-red);
+  --ark-item-status-blue: var(--arkhanval-color-blue);
+  --ark-item-body-padding: 10px;
+}
+
+/* The content nearly fills the Item window. Spacing is shared by all simple sheets. */
+.arkhanval-item-sheet .arkhanval-item-sheet__body {
+  padding: var(--ark-item-body-padding);
+  gap: var(--ark-item-gap);
+  min-width: 0;
+}
+/* Book, work and equipment respect the same column proportions as the mockups. */
+.arkhanval-item-sheet .ark-item-layout--book,
+.arkhanval-item-sheet .ark-item-layout--work {
+  width: 100%;
+  min-width: 0;
+  margin-inline: 0;
+  gap: var(--ark-item-gap);
+}
+/* One grid, like the pre-roll: main content and toggle never overlap. */
+.arkhanval-item-sheet .ark-item-layout--equipment {
+  display: grid;
+  grid-template-columns: minmax(0, var(--ark-item-main-width)) var(--ark-item-toggle-width);
+  grid-template-rows: auto minmax(150px, 1fr) auto;
+  grid-template-areas:
+    "primary toggle"
+    "description toggle"
+    "actions actions";
+  column-gap: var(--ark-item-sidebar-gap);
+  row-gap: var(--ark-item-gap);
+  width: 100%;
+  min-width: 0;
+  align-items: stretch;
+}
+.arkhanval-item-sheet .ark-item-layout--equipment.ark-item-layout--rules-open {
+  grid-template-columns: minmax(0, var(--ark-item-main-width)) var(--ark-item-toggle-width) var(--ark-item-sidebar-width);
+  grid-template-areas:
+    "primary toggle rules"
+    "description toggle rules"
+    "actions actions actions";
+}
+.arkhanval-item-sheet .ark-item-layout--equipment > .ark-item-primary { grid-area: primary; }
+.arkhanval-item-sheet .ark-item-layout--equipment > .arkhanval-item-sheet__section {
+  grid-area: description;
+  min-width: 0;
+}
+.arkhanval-item-sheet .ark-item-layout--equipment > .ark-item-actions { grid-area: actions; }
+.arkhanval-item-sheet .ark-item-primary {
+  display: grid;
+  grid-template-columns: var(--ark-item-icon-size) minmax(0, 1fr);
+  grid-template-rows: auto;
+  align-items: start;
+  column-gap: var(--ark-item-padding);
+  row-gap: 10px;
+  padding: var(--ark-item-padding);
+}
+.arkhanval-item-sheet .ark-item-primary__visual {
+  display: grid;
+  min-width: 0;
+  justify-items: start;
+  align-content: start;
+  gap: 8px;
+}
+.arkhanval-item-sheet .ark-item-primary .arkhanval-item-core__image {
+  width: var(--ark-item-icon-size);
+  height: var(--ark-item-icon-size);
+  aspect-ratio: 1;
+  object-fit: contain;
+  padding: 4px;
+}
+/* Outrank the legacy .arkhanval-item-core--simple rule which forces two rows. */
+.arkhanval-item-sheet .arkhanval-item-core--simple .ark-item-primary__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  align-content: start;
+  align-items: start;
+  gap: 10px;
+  min-height: 0;
+  min-width: 0;
+}
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+  align-items: start;
+}
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row--book,
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row--work {
+  grid-template-columns: minmax(0, 2fr) minmax(90px, 1fr);
+}
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__fields > label,
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row > label {
+  display: grid;
+  grid-template-rows: auto 32px;
+  gap: 4px;
+  min-width: 0;
+  align-content: start;
+}
+.arkhanval-item-sheet .ark-item-primary input,
+.arkhanval-item-sheet .ark-item-primary select { min-width: 0; width: 100%; }
+.arkhanval-item-sheet .ark-item-primary__check { gap: 5px; padding-inline: 0; }
+
+/* Apply the approved prereoll effect appearance to the Item's declared-rule summary. */
+.arkhanval-item-sheet .ark-item-primary .ark-item-rule-summary {
+  grid-column: 1 / -1;
+  border: 1px solid rgb(115 114 144 / 46%);
+  border-left: 4px solid var(--ark-item-status-blue);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #56566e;
+  background: rgb(115 114 144 / 8%);
+  font-size: 12px;
+}
+.arkhanval-item-sheet .ark-item-rule-summary > strong { color: var(--ark-item-status-blue); }
+.arkhanval-item-sheet .ark-item-rule-summary ul { margin: 5px 0 0; padding-left: 19px; }
+.arkhanval-item-sheet .ark-item-reading-notice { margin: 0; font-size: 12px; }
+
+/* Explicit action selectors beat the general red Item button rule, including hover. */
+.arkhanval-item-sheet .arkhanval-item-sheet__footer.ark-item-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  border: 0;
+  padding: 4px 0 10px;
+}
+.arkhanval-item-sheet .ark-item-actions button { min-width: 150px; width: auto; }
+.arkhanval-item-sheet button.ark-item-actions__save,
+.arkhanval-item-sheet button.ark-item-actions__save:not(:disabled) {
+  background: var(--ark-item-blue);
+  border: 1px solid var(--ark-item-blue);
+  color: #fff8ec;
+}
+.arkhanval-item-sheet button.ark-item-actions__save:not(:disabled):hover {
+  background: var(--ark-item-blue-hover);
+  border-color: var(--ark-item-blue-hover);
+  color: #fff8ec;
+  box-shadow: var(--arkhanval-roll-shadow);
+}
+.arkhanval-item-sheet button.arkhanval-item-sheet__delete {
+  background: var(--ark-item-red);
+  border: 1px solid var(--ark-item-red);
+  color: #fff8ec;
+}
+
+/* Items with a rules editor share the same vertical toggle. */
+.arkhanval-item-sheet button.ark-item-rules-toggle {
+  grid-area: toggle;
+  position: static;
+  align-self: stretch;
+  justify-self: stretch;
+  height: auto;
+  min-height: 0;
+  width: var(--ark-item-toggle-width);
+  min-width: var(--ark-item-toggle-width);
+  margin: 0;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgb(92 75 55 / 28%);
+  border-radius: 7px;
+  background: rgb(255 252 245 / 78%);
+  color: #4f463b;
+  box-shadow: var(--arkhanval-roll-shadow);
+  cursor: pointer;
+}
+.arkhanval-item-sheet .ark-item-rules-toggle span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: .015em;
+}
+.arkhanval-item-sheet button.ark-item-rules-toggle:not(:disabled):hover,
+.arkhanval-item-sheet button.ark-item-rules-toggle:not(:disabled):focus-visible {
+  background: rgb(239 232 216 / 95%);
+  border-color: var(--ark-item-status-blue);
+  color: #4f463b;
+}
+.arkhanval-item-sheet .ark-item-layout--equipment > [data-persistent-rules-panel] {
+  grid-area: rules;
+  display: none;
+  position: static;
+  min-width: 0;
+  width: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.arkhanval-item-sheet .ark-item-layout--equipment.ark-item-layout--rules-open > [data-persistent-rules-panel] {
+  display: block;
+}
+.arkhanval-item-sheet .ark-item-layout--equipment > [data-persistent-rules-panel] > summary { display: none; }
+.arkhanval-item-sheet .ark-item-layout--equipment > [data-persistent-rules-panel] > .arkhanval-item-panel__body {
+  padding: 12px;
+}
+/* Keep the technical identifier with the advanced rules, GM editing only. */
+.arkhanval-item-sheet .ark-item-layout--equipment > [data-persistent-rules-panel] .arkhanval-item-rule__fields {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (max-width: 620px) {
+  .arkhanval-item-sheet { --ark-item-icon-size: 90px; --ark-item-padding: 10px; }
+  .arkhanval-item-sheet .ark-item-primary .ark-item-primary__row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .arkhanval-item-sheet .arkhanval-item-sheet__footer.ark-item-actions { gap: 12px; }
+}
+
+/* Arms, armor and traits share the 11.4A component contract. */
+.arkhanval-item-sheet .ark-item-layout--advanced,
+.arkhanval-item-sheet .ark-item-layout--weapon.ark-item-layout--rules-sidebar,
+.arkhanval-item-sheet .ark-item-layout--armor.ark-item-layout--rules-sidebar,
+.arkhanval-item-sheet .ark-item-layout--trait.ark-item-layout--rules-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0, var(--ark-item-main-width)) var(--ark-item-toggle-width);
+  column-gap: var(--ark-item-sidebar-gap);
+  width: 100%;
+  grid-template-rows: minmax(0, auto) auto;
+  align-items: stretch;
+}
+.arkhanval-item-sheet .ark-item-layout--weapon.ark-item-layout--rules-open,
+.arkhanval-item-sheet .ark-item-layout--armor.ark-item-layout--rules-open,
+.arkhanval-item-sheet .ark-item-layout--trait.ark-item-layout--rules-open {
+  grid-template-columns: minmax(0, var(--ark-item-main-width)) var(--ark-item-toggle-width) var(--ark-item-sidebar-width);
+}
+.arkhanval-item-sheet .ark-item-advanced-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ark-item-gap);
+  min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+.arkhanval-item-sheet .ark-item-layout--weapon > .ark-item-rules-toggle,
+.arkhanval-item-sheet .ark-item-layout--armor > .ark-item-rules-toggle,
+.arkhanval-item-sheet .ark-item-layout--trait > .ark-item-rules-toggle {
+  grid-column: 2;
+  grid-row: 1;
+}
+.arkhanval-item-sheet .ark-item-layout--weapon > [data-persistent-rules-panel],
+.arkhanval-item-sheet .ark-item-layout--armor > [data-persistent-rules-panel],
+.arkhanval-item-sheet .ark-item-layout--trait > [data-persistent-rules-panel] {
+  grid-column: 3;
+  grid-row: 1;
+  display: none;
+  min-height: 0;
+  min-width: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.arkhanval-item-sheet .ark-item-layout--weapon.ark-item-layout--rules-open > [data-persistent-rules-panel],
+.arkhanval-item-sheet .ark-item-layout--armor.ark-item-layout--rules-open > [data-persistent-rules-panel],
+.arkhanval-item-sheet .ark-item-layout--trait.ark-item-layout--rules-open > [data-persistent-rules-panel] { display: block; }
+.arkhanval-item-sheet .ark-item-layout--rules-sidebar > [data-persistent-rules-panel] > summary { display: none; }
+.arkhanval-item-sheet .ark-item-layout--rules-sidebar > [data-persistent-rules-panel] > .arkhanval-item-panel__body { padding: 12px; }
+.arkhanval-item-sheet .ark-item-primary--weapon,
+.arkhanval-item-sheet .ark-item-primary--armor,
+.arkhanval-item-sheet .ark-item-primary--trait {
+  display: grid;
+  grid-template-columns: var(--ark-item-icon-size) minmax(0, 1fr);
+  gap: 10px var(--ark-item-padding);
+  padding: var(--ark-item-padding);
+  width: 100%;
+  align-items: start;
+}
+.arkhanval-item-sheet .ark-item-primary--armor { grid-template-columns: var(--ark-item-icon-size) minmax(0, 1fr) 125px; }
+.arkhanval-item-sheet .ark-item-primary--weapon .ark-item-primary__fields,
+.arkhanval-item-sheet .ark-item-primary--armor .ark-item-primary__fields,
+.arkhanval-item-sheet .ark-item-primary--trait .ark-item-primary__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+}
+.arkhanval-item-sheet .ark-item-primary--weapon .ark-item-primary__fields > label,
+.arkhanval-item-sheet .ark-item-primary--armor .ark-item-primary__fields > label,
+.arkhanval-item-sheet .ark-item-primary--trait .ark-item-primary__fields > label { display: grid; gap: 4px; }
+.arkhanval-item-sheet .ark-item-primary--weapon .ark-item-primary__row,
+.arkhanval-item-sheet .ark-item-primary--armor .ark-item-primary__row,
+.arkhanval-item-sheet .ark-item-primary--trait .ark-item-primary__row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row label { min-width: 0; display: grid; gap: 4px; }
+.arkhanval-item-sheet .ark-item-primary input,
+.arkhanval-item-sheet .ark-item-primary select { min-width: 0; width: 100%; }
+.arkhanval-item-sheet .ark-item-primary .ark-item-rule-summary { grid-column: 1 / -1; }
+.arkhanval-item-sheet .ark-item-armor-types { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; border-left: 1px solid rgb(115 114 144 / 26%); padding-left: 10px; }
+.arkhanval-item-sheet .ark-item-armor-properties .ark-item-property-row { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+.arkhanval-item-sheet .ark-item-armor-properties .ark-item-property-row label { display:grid;gap:4px;min-width:0; }
+.arkhanval-item-sheet .ark-item-advanced-tags { display:grid;gap:5px; }
+.arkhanval-item-sheet .ark-item-layout--rules-sidebar .arkhanval-item-sheet__section,
+.arkhanval-item-sheet .ark-item-layout--rules-sidebar .arkhanval-item-panel { min-width: 0; }
+
+/* the action row is not part of the vertical rules control.
+   It remains under the main content, including when the rules panel is open. */
+.arkhanval-item-sheet .ark-item-layout--rules-sidebar > .ark-item-actions {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: min(100%, var(--ark-item-main-width));
+  box-sizing: border-box;
+}
+.arkhanval-item-sheet .ark-item-layout--equipment > .ark-item-actions {
+  grid-area: actions;
+  justify-self: start;
+  width: min(100%, var(--ark-item-main-width));
+  box-sizing: border-box;
+}
+
+/* richer declared rule summaries, shared across item families. */
+.arkhanval-item-sheet .ark-item-rule-summary li + li { margin-top: 5px; }
+.arkhanval-item-sheet .ark-item-rule-summary li small { display: block; font-size: 11px; line-height: 1.3; color: #555a73; }
+.arkhanval-item-sheet .ark-item-rule-summary__target { font-weight: 600; }
+/* Spell uses the same stable main column and vertical toggle as other rule Items. */
+.arkhanval-item-sheet .ark-item-layout--spell.ark-item-layout--rules-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0,var(--ark-item-main-width)) var(--ark-item-toggle-width);
+  grid-template-rows: minmax(0,auto) auto;
+  gap: var(--ark-item-gap) var(--ark-item-sidebar-gap);
+  align-items: stretch;
+}
+.arkhanval-item-sheet .ark-item-layout--spell.ark-item-layout--rules-open {
+  grid-template-columns: minmax(0,var(--ark-item-main-width)) var(--ark-item-toggle-width) var(--ark-item-sidebar-width);
+}
+.arkhanval-item-sheet .ark-item-layout--spell > .ark-item-rules-toggle { grid-column: 2; grid-row: 1; }
+.arkhanval-item-sheet .ark-item-layout--spell > [data-persistent-rules-panel] {
+  grid-column: 3; grid-row: 1; display:none; min-width:0; min-height:0; overflow-y:auto;
+}
+.arkhanval-item-sheet .ark-item-layout--spell.ark-item-layout--rules-open > [data-persistent-rules-panel] { display: block; }
+.arkhanval-item-sheet .ark-item-primary--spell {
+  display:grid; grid-template-columns:var(--ark-item-icon-size) minmax(0,1fr);
+  gap: 10px var(--ark-item-padding); padding:var(--ark-item-padding); align-items:start;
+}
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__fields { display:flex; flex-direction:column;gap:8px;min-width:0; }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__fields > label { display:grid;gap:4px; }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__row { display:grid; gap:8px; }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__row--spell-learning { grid-template-columns: minmax(0,2fr) repeat(2,minmax(60px,1fr)); }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__row--spell-properties { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__fields label { display:grid;gap:4px;min-width:0; }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__visual select { width:var(--ark-item-icon-size);min-width:0; }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-rule-summary { grid-column:1/-1; }
+
+/* Spell mockup: main information + magic family in the header; 3 × 3 properties below. */
+.arkhanval-item-sheet .ark-item-primary--spell { grid-template-columns:var(--ark-item-icon-size) minmax(0,1fr) 130px; }
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-spell-types {
+  border-left:1px solid rgb(115 114 144 / 30%); padding-left:10px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;
+}
+.arkhanval-item-sheet .ark-item-spell-types > strong {font-size:12px;}
+.arkhanval-item-sheet .ark-item-primary--spell .ark-item-primary__fields > label {display:grid;gap:4px;}
+.arkhanval-item-sheet .ark-item-spell-details__grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.arkhanval-item-sheet .ark-item-spell-details__grid > label {display:grid;gap:4px;min-width:0;}
+.arkhanval-item-sheet .ark-item-spell-details__grid input,
+.arkhanval-item-sheet .ark-item-spell-details__grid select {min-width:0;width:100%;}
+
+/* compact Skill + Specialty sheets. */
+.arkhanval-item-sheet .ark-item-primary--skill,
+.arkhanval-item-sheet .ark-item-primary--specialty {
+  display: grid;
+  grid-template-columns: var(--ark-item-icon-size) minmax(0, 1fr);
+  gap: 10px var(--ark-item-padding);
+  padding: var(--ark-item-padding);
+  width: 100%;
+  align-items: start;
+}
+.arkhanval-item-sheet .ark-item-primary--skill .ark-item-primary__fields,
+.arkhanval-item-sheet .ark-item-primary--specialty .ark-item-primary__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.arkhanval-item-sheet .ark-item-primary--skill .ark-item-primary__fields > label,
+.arkhanval-item-sheet .ark-item-primary--specialty .ark-item-primary__fields > label {
+  display: grid;
+  gap: 4px;
+}
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row--skill {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(72px, .7fr) minmax(72px, .7fr);
+  gap: 10px;
+  align-items: end;
+}
+.arkhanval-item-sheet .ark-item-primary .ark-item-primary__row--skill > label {
+  min-width: 0;
+}
+.arkhanval-item-sheet .ark-item-primary__row--specialty {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, .72fr);
+  gap: 12px;
+  align-items: end;
+}
+.arkhanval-item-sheet .ark-item-specialty-repeatable {
+  min-height: 32px;
+  align-self: end;
+  justify-content: flex-start;
+  padding-bottom: 5px;
+}
+.arkhanval-item-sheet .ark-item-primary--specialty > .ark-item-rule-summary {
+  grid-column: 1 / -1;
+}
+
+.arkhanval-item-sheet .ark-item-layout--specialty.ark-item-layout--rules-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0, var(--ark-item-main-width)) var(--ark-item-toggle-width);
+  grid-template-rows: minmax(0, auto) auto;
+  column-gap: var(--ark-item-sidebar-gap);
+  width: 100%;
+  align-items: stretch;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty.ark-item-layout--rules-open {
+  grid-template-columns: minmax(0, var(--ark-item-main-width)) var(--ark-item-toggle-width) var(--ark-item-sidebar-width);
+}
+.arkhanval-item-sheet .ark-item-layout--specialty > .ark-item-advanced-main {
+  grid-column: 1;
+  grid-row: 1;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty > .ark-item-rules-toggle {
+  grid-column: 2;
+  grid-row: 1;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty > [data-persistent-rules-panel] {
+  grid-column: 3;
+  grid-row: 1;
+  display: none;
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty.ark-item-layout--rules-open > [data-persistent-rules-panel] {
+  display: block;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty > [data-persistent-rules-panel] > summary {
+  display: none;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty > [data-persistent-rules-panel] > .arkhanval-item-panel__body {
+  padding: 12px;
+}
+.arkhanval-item-sheet .ark-item-layout--specialty > .ark-item-actions {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: min(100%, var(--ark-item-main-width));
+  box-sizing: border-box;
+}
+
+/* Wound, People and State complete the compact Item-sheet family. */
+.arkhanval-item-sheet .ark-item-primary--wound,
+.arkhanval-item-sheet .ark-item-primary--people,
+.arkhanval-item-sheet .ark-item-primary--state {
+  display: grid;
+  grid-template-columns: var(--ark-item-icon-size) minmax(0, 1fr);
+  gap: 10px var(--ark-item-padding);
+  padding: var(--ark-item-padding);
+  width: 100%;
+  align-items: start;
+}
+.arkhanval-item-sheet .ark-item-primary--wound .ark-item-primary__fields,
+.arkhanval-item-sheet .ark-item-primary--people .ark-item-primary__fields,
+.arkhanval-item-sheet .ark-item-primary--state .ark-item-primary__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.arkhanval-item-sheet .ark-item-primary--wound .ark-item-primary__fields > label,
+.arkhanval-item-sheet .ark-item-primary--people .ark-item-primary__fields > label,
+.arkhanval-item-sheet .ark-item-primary--state .ark-item-primary__fields > label {
+  display: grid;
+  gap: 4px;
+}
+.arkhanval-item-sheet .ark-item-primary--wound .ark-item-primary__row--wound {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, .72fr);
+  gap: 12px;
+  align-items: end;
+}
+.arkhanval-item-sheet .ark-item-wound-treated {
+  min-height: 32px;
+  align-self: end;
+  justify-content: flex-start;
+  padding-bottom: 5px;
+}
+.arkhanval-item-sheet .ark-item-primary--people > .ark-item-rule-summary,
+.arkhanval-item-sheet .ark-item-primary--state > .ark-item-rule-summary {
+  grid-column: 1 / -1;
+}
+.arkhanval-item-sheet .ark-item-wound-notes,
+.arkhanval-item-sheet .ark-item-wound-description {
+  min-width: 0;
+}
+
+/* People and State rules are part of the sheet itself: always visible, never a side/collapsible panel. */
+.arkhanval-item-sheet .ark-item-layout--people > [data-persistent-rules-panel],
+.arkhanval-item-sheet .ark-item-layout--state > [data-persistent-rules-panel] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+.arkhanval-item-sheet .ark-item-layout--people > [data-persistent-rules-panel] > summary,
+.arkhanval-item-sheet .ark-item-layout--state > [data-persistent-rules-panel] > summary {
+  display: none;
+}
+.arkhanval-item-sheet .ark-item-layout--people > [data-persistent-rules-panel] > .arkhanval-item-panel__body,
+.arkhanval-item-sheet .ark-item-layout--state > [data-persistent-rules-panel] > .arkhanval-item-panel__body {
+  padding: 12px;
+}
+.arkhanval-item-sheet .ark-item-layout--people > .ark-item-actions,
+.arkhanval-item-sheet .ark-item-layout--state > .ark-item-actions,
+.arkhanval-item-sheet .ark-item-layout--wound > .ark-item-actions {
+  width: 100%;
+}
+.arkhanval-item-sheet .ark-item-direct-rules__title {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(115 114 144 / 26%);
+  color: #4f463b;
+  font-size: 14px;
+}

@@ -1,0 +1,884 @@
+<div class="arkhanval-creation-shell">
+  <header class="arkhanval-creation-header">
+    <div class="arkhanval-creation-header__mark">
+      <img src="systems/arkhanval/assets/dices/dice_arkhanval.webp" alt="" />
+    </div>
+    <div>
+      <p class="arkhanval-creation-kicker">Arkhanval</p>
+      <h1>{{actor.name}}</h1>
+      {{#if isEntry}}
+        <p>Comment souhaitez-vous préparer ce personnage&nbsp;?</p>
+      {{else}}
+        <p>Création guidée d’un Ombregarde</p>
+      {{/if}}
+    </div>
+  </header>
+
+  {{#unless editable}}
+    <div class="arkhanval-creation-notice arkhanval-creation-notice--warning">
+      Vous devez pouvoir modifier ce personnage pour poursuivre sa création.
+    </div>
+  {{/unless}}
+
+  {{#if isEntry}}
+    <section class="arkhanval-creation-entry" aria-label="Choix du mode de création">
+      <button type="button"
+              class="arkhanval-creation-route arkhanval-creation-route--direct"
+              data-action="directSheet"
+              {{#unless editable}}disabled{{/unless}}>
+        <span class="arkhanval-creation-route__visual">
+          <img src="systems/arkhanval/assets/creation/route-direct-sheet.webp" alt="Illustration d’accès direct à la fiche" />
+        </span>
+        <span class="arkhanval-creation-route__body">
+          <strong>Accès direct à la fiche</strong>
+          <span>Le personnage existe déjà&nbsp;? Ouvrez une fiche vierge et recopiez directement ses informations.</span>
+        </span>
+        <span class="arkhanval-creation-route__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </button>
+
+      <button type="button"
+              class="arkhanval-creation-route arkhanval-creation-route--guided"
+              data-action="guidedCreation"
+              {{#unless editable}}disabled{{/unless}}>
+        <span class="arkhanval-creation-route__visual">
+          <img src="systems/arkhanval/assets/creation/route-guided-character.webp" alt="Illustration de création guidée" />
+        </span>
+        <span class="arkhanval-creation-route__body">
+          <strong>Création guidée</strong>
+          <span>Construisez votre Ombregarde étape par étape&nbsp;: peuple et Arks, archétypes, compétences et spécialités.</span>
+        </span>
+        <span class="arkhanval-creation-route__arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </button>
+
+      <button type="button"
+              class="arkhanval-creation-route arkhanval-creation-route--npc"
+              data-action="npcCreation"
+              disabled>
+        <span class="arkhanval-creation-route__visual">
+          <img src="systems/arkhanval/assets/creation/route-npc.webp" alt="Illustration de création de PNJ" />
+        </span>
+        <span class="arkhanval-creation-route__body">
+          <strong>Création de PNJ</strong>
+          <span>La création guidée des PNJ sera proposée ultérieurement.</span>
+          <em>À venir</em>
+        </span>
+      </button>
+    </section>
+  {{/if}}
+
+  {{#if isProfileStep}}
+    <section class="arkhanval-creation-guided">
+      <nav class="arkhanval-creation-progress" aria-label="Progression de la création">
+        {{#each progressSteps as |step|}}
+          <button type="button"
+                  class="{{#if step.active}}active{{/if}} {{#if step.reached}}reached{{/if}} {{#if step.locked}}locked{{/if}}"
+                  data-action="navigateStep"
+                  data-step="{{step.id}}"
+                  {{#unless step.clickable}}disabled{{/unless}}>
+            {{step.label}}
+          </button>
+        {{/each}}
+      </nav>
+
+      <div class="arkhanval-creation-step-heading">
+        <div>
+          <p class="arkhanval-creation-kicker">Préparation</p>
+          <h2>Choisissez le profil de création</h2>
+          <p>
+            Ce choix fixe le budget de compétences, le rang maximal et le nombre de spécialités disponibles. Il doit être fait en accord avec le MJ.
+          </p>
+        </div>
+      </div>
+
+      <div class="arkhanval-creation-profiles">
+        {{#each profiles as |entry|}}
+          <button type="button"
+                  class="arkhanval-creation-profile {{#if entry.selected}}selected{{/if}}"
+                  data-action="chooseProfile"
+                  data-profile="{{entry.id}}"
+                  aria-pressed="{{#if entry.selected}}true{{else}}false{{/if}}"
+                  {{#unless ../editable}}disabled{{/unless}}>
+            <strong>{{entry.label}}</strong>
+            <span><b>{{entry.points}}</b> points de compétences</span>
+            <span>Rang maximum <b>{{entry.maxRank}}</b></span>
+            <span><b>{{entry.specialties}}</b> spécialités</span>
+          </button>
+        {{/each}}
+      </div>
+
+      {{#if profile}}
+        <div class="arkhanval-creation-notice arkhanval-creation-notice--info">
+          <strong>{{profile.label}}</strong> est enregistré. Vous pouvez fermer cette fenêtre et reprendre la création plus tard.
+        </div>
+      {{/if}}
+
+      <footer class="arkhanval-creation-footer arkhanval-creation-footer--actions">
+        <button type="button"
+                class="arkhanval-creation-secondary"
+                data-action="backToEntry"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-arrow-left"></i>
+          Retour
+        </button>
+        <button type="button"
+                class="arkhanval-creation-primary"
+                data-action="nextFromProfile"
+                {{#unless profile}}disabled{{/unless}}
+                {{#unless editable}}disabled{{/unless}}>
+          Étape suivante
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </footer>
+    </section>
+  {{/if}}
+
+  {{#if isPeopleStep}}
+    <section class="arkhanval-creation-guided arkhanval-creation-guided--people">
+      <nav class="arkhanval-creation-progress" aria-label="Progression de la création">
+        {{#each progressSteps as |step|}}
+          <button type="button"
+                  class="{{#if step.active}}active{{/if}} {{#if step.reached}}reached{{/if}} {{#if step.locked}}locked{{/if}}"
+                  data-action="navigateStep"
+                  data-step="{{step.id}}"
+                  {{#unless step.clickable}}disabled{{/unless}}>
+            {{step.label}}
+          </button>
+        {{/each}}
+      </nav>
+
+      <div class="arkhanval-creation-step-heading">
+        <div>
+          <p class="arkhanval-creation-kicker">Étape 1</p>
+          <h2>Choisissez votre peuple</h2>
+        </div>
+      </div>
+
+      <div class="arkhanval-creation-people-grid {{#if selectedPeople}}has-selection{{/if}}">
+        {{#each peoples as |people|}}
+          <button type="button"
+                  class="arkhanval-creation-people-card {{#if people.selected}}selected{{/if}}"
+                  data-action="choosePeople"
+                  data-people="{{people.id}}"
+                  aria-pressed="{{#if people.selected}}true{{else}}false{{/if}}"
+                  {{#unless ../editable}}disabled{{/unless}}>
+            <img src="{{people.image}}" alt="" />
+            <strong>{{people.label}}</strong>
+          </button>
+        {{/each}}
+      </div>
+
+      {{#if selectedPeople}}
+        <section class="arkhanval-creation-people-detail" aria-live="polite">
+          <div class="arkhanval-creation-people-detail__portrait">
+            <img src="{{selectedPeople.image}}" alt="" />
+          </div>
+          <div class="arkhanval-creation-people-detail__content">
+            <div class="arkhanval-creation-people-detail__heading">
+              <div>
+                <p class="arkhanval-creation-kicker">Peuple sélectionné</p>
+                <h3>{{selectedPeople.label}}</h3>
+              </div>
+              <p class="arkhanval-creation-people-detail__lore">{{selectedPeople.lore}}</p>
+            </div>
+            <div class="arkhanval-creation-people-detail__mechanics">
+              <div>
+                <span>Arks de départ</span>
+                <strong class="arkhanval-creation-people-detail__arks">{{selectedPeople.arks}}</strong>
+              </div>
+              <div>
+                <span>Particularités mécaniques</span>
+                <strong>{{selectedPeople.mechanics}}</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+      {{else}}
+        <div class="arkhanval-creation-people-detail arkhanval-creation-people-detail--empty">
+          <p>Sélectionnez un peuple pour afficher ici ses données mécaniques de création.</p>
+        </div>
+      {{/if}}
+
+
+      {{#if selectedPeople}}
+        <section class="arkhanval-creation-ark-config">
+          <header class="arkhanval-creation-ark-config__header">
+            <div>
+              <p class="arkhanval-creation-kicker">Configuration des Arks</p>
+              <h3>Valeurs de départ et cercles</h3>
+            </div>
+            <div class="arkhanval-creation-ark-config__status {{#if arkStatus.valid}}valid{{/if}}">
+              {{#if arkStatus.valid}}
+                <i class="fa-solid fa-check" aria-hidden="true"></i>
+                Configuration prête
+              {{else}}
+                Configuration à compléter
+              {{/if}}
+            </div>
+          </header>
+
+          {{#if arkMode.isHumanFree}}
+            <div class="arkhanval-creation-ark-choice">
+              <strong>Point d’Ark humain</strong>
+              <span>Placez le point libre accordé aux Humains.</span>
+              <div class="arkhanval-creation-ark-choice__buttons">
+                <button type="button" class="{{#if arkMode.humanArkoeur}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="arkoeur">+1 Arkœur</button>
+                <button type="button" class="{{#if arkMode.humanArkentropie}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="arkentropie">+1 Arkentropie</button>
+                <button type="button" class="{{#if arkMode.humanArksonge}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="arksonge">+1 Arksonge</button>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#if arkMode.isElfinienSplit}}
+            <div class="arkhanval-creation-ark-choice">
+              <strong>Répartition elfinienne</strong>
+              <span>Répartissez les 2 points entre Arkentropie et Arksonge.</span>
+              <div class="arkhanval-creation-ark-choice__buttons">
+                <button type="button" class="{{#if arkMode.elfinienEntropie2}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="entropie2">2 Arkentropie</button>
+                <button type="button" class="{{#if arkMode.elfinienSplit}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="split">1 Arkentropie + 1 Arksonge</button>
+                <button type="button" class="{{#if arkMode.elfinienSonge2}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="songe2">2 Arksonge</button>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#if arkMode.isKrommholdRange}}
+            <div class="arkhanval-creation-ark-choice">
+              <strong>Nature animale du Krömmhold</strong>
+              <span>L’Arkœur varie de 2 à 4 selon l’espèce animale. Le choix reste à accorder avec le MJ.</span>
+              <div class="arkhanval-creation-ark-choice__buttons">
+                <button type="button" class="{{#if arkMode.krommhold2}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="2">Arkœur 2</button>
+                <button type="button" class="{{#if arkMode.krommhold3}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="3">Arkœur 3</button>
+                <button type="button" class="{{#if arkMode.krommhold4}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="4">Arkœur 4</button>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#if arkMode.isPalecienOrigin}}
+            <div class="arkhanval-creation-ark-choice">
+              <strong>Mode de vie palécien</strong>
+              <span>Le choix détermine le point d’Ark supplémentaire.</span>
+              <div class="arkhanval-creation-ark-choice__buttons">
+                <button type="button" class="{{#if arkMode.palecienSurface}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="surface">Surface · +1 Arksonge</button>
+                <button type="button" class="{{#if arkMode.palecienAquatic}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="choice" data-ark-value="aquatic">Aquatique · +1 Arkentropie</button>
+              </div>
+            </div>
+          {{/if}}
+
+          {{#if arkMode.isManualMj}}
+            <div class="arkhanval-creation-ark-choice">
+              <strong>Égaré — réglage avec le MJ</strong>
+              <span>Déterminez ces valeurs avec le MJ selon le monde d’origine et la nature du personnage.</span>
+            </div>
+          {{/if}}
+
+          {{#if arkMode.isTherianthropeManual}}
+            <div class="arkhanval-creation-ark-choice">
+              <strong>Thérianthrope — espèce d’origine</strong>
+              <span>Reproduisez les Arks de l’espèce d’origine, puis choisissez l’Ark lié à la nature du personnage.</span>
+              <div class="arkhanval-creation-ark-choice__buttons">
+                <button type="button" class="{{#if arkMode.natureArkentropie}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="natureArk" data-ark-value="arkentropie">Nature · Arkentropie</button>
+                <button type="button" class="{{#if arkMode.natureArksonge}}selected{{/if}}"
+                        data-action="chooseArkOption" data-ark-field="natureArk" data-ark-value="arksonge">Nature · Arksonge</button>
+              </div>
+            </div>
+          {{/if}}
+
+          <div class="arkhanval-creation-ark-grid">
+            {{#each arkCards as |ark|}}
+              <article class="arkhanval-creation-ark-card">
+                <header>
+                  <img src="{{ark.image}}" alt="" />
+                  <strong>{{ark.label}}</strong>
+                </header>
+
+                <div class="arkhanval-creation-ark-card__rank">
+                  <span>Rang</span>
+                  {{#if ark.manual}}
+                    <div class="arkhanval-creation-ark-stepper">
+                      <button type="button" data-action="adjustManualArk" data-ark="{{ark.id}}" data-delta="-1"
+                              {{#unless ../editable}}disabled{{/unless}}>−</button>
+                      <b>{{ark.rank}}</b>
+                      <button type="button" data-action="adjustManualArk" data-ark="{{ark.id}}" data-delta="1"
+                              {{#unless ../editable}}disabled{{/unless}}>+</button>
+                    </div>
+                  {{else}}
+                    <b class="arkhanval-creation-ark-rank-value">{{ark.rank}}</b>
+                  {{/if}}
+                </div>
+
+                <div class="arkhanval-creation-ark-card__circles">
+                  <span>Cercles de départ</span>
+                  <div class="arkhanval-creation-ark-stepper">
+                    <button type="button" data-action="adjustArkCircle" data-ark="{{ark.id}}" data-delta="-1"
+                            {{#unless ark.canRemoveCircle}}disabled{{/unless}}
+                            {{#unless ../editable}}disabled{{/unless}}>−</button>
+                    <b>{{ark.circles}}</b>
+                    <button type="button" data-action="adjustArkCircle" data-ark="{{ark.id}}" data-delta="1"
+                            {{#unless ark.canAddCircle}}disabled{{/unless}}
+                            {{#unless ../editable}}disabled{{/unless}}>+</button>
+                  </div>
+                </div>
+              </article>
+            {{/each}}
+          </div>
+
+          <div class="arkhanval-creation-ark-summary">
+            <span>Cercles attribués : <strong>{{arkStatus.circlesTotal}} / 2</strong></span>
+            {{#unless arkStatus.choiceComplete}}
+              <span class="warning">Un choix lié au peuple reste à compléter.</span>
+            {{/unless}}
+            {{#unless arkStatus.circlesComplete}}
+              <span class="warning">Répartissez exactement 2 cercles de départ.</span>
+            {{/unless}}
+          </div>
+
+          {{#if arkMode.isManualMj}}
+            <button type="button"
+                    class="arkhanval-creation-ark-confirm {{#if arkMode.mjConfirmed}}selected{{/if}}"
+                    data-action="toggleArkConfirmation"
+                    data-confirmation="mjConfirmed"
+                    {{#unless editable}}disabled{{/unless}}>
+              <i class="fa-solid {{#if arkMode.mjConfirmed}}fa-check-square{{else}}fa-square{{/if}}" aria-hidden="true"></i>
+              Valeurs établies avec le MJ
+            </button>
+          {{/if}}
+
+          {{#if arkMode.isTherianthropeManual}}
+            <button type="button"
+                    class="arkhanval-creation-ark-confirm {{#if arkMode.mjConfirmed}}selected{{/if}}"
+                    data-action="toggleArkConfirmation"
+                    data-confirmation="mjConfirmed"
+                    {{#unless editable}}disabled{{/unless}}>
+              <i class="fa-solid {{#if arkMode.mjConfirmed}}fa-check-square{{else}}fa-square{{/if}}" aria-hidden="true"></i>
+              Arks de l’espèce d’origine validés avec le MJ
+            </button>
+          {{/if}}
+
+          {{#if arkStatus.needsRollAcknowledgement}}
+            <div class="arkhanval-creation-ark-roll-note">
+              <strong>Tirages d’Ark à la création</strong>
+              <p>Si un ou plusieurs rangs d’Arkentropie et/ou d’Arksonge sont présents, un tirage sur la table correspondante doit être effectué. Faites-le avec le MJ&nbsp;: le résultat peut influencer la suite de la création.</p>
+              <button type="button"
+                      class="arkhanval-creation-ark-confirm {{#if arkMode.rollsAcknowledged}}selected{{/if}}"
+                      data-action="toggleArkConfirmation"
+                      data-confirmation="rollsAcknowledged"
+                      {{#unless editable}}disabled{{/unless}}>
+                <i class="fa-solid {{#if arkMode.rollsAcknowledged}}fa-check-square{{else}}fa-square{{/if}}" aria-hidden="true"></i>
+                Les tirages nécessaires ont été traités avec le MJ — cliquez pour confirmer
+              </button>
+            </div>
+          {{/if}}
+        </section>
+      {{/if}}
+
+      <footer class="arkhanval-creation-footer arkhanval-creation-footer--actions">
+        <button type="button"
+                class="arkhanval-creation-secondary"
+                data-action="backToProfile"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-arrow-left"></i>
+          Retour
+        </button>
+        <button type="button"
+                class="arkhanval-creation-primary"
+                data-action="nextFromPeople"
+                {{#unless arkStatus.valid}}disabled{{/unless}}
+                {{#unless editable}}disabled{{/unless}}
+                title="{{#unless arkStatus.valid}}Complétez la configuration des Arks avant de continuer.{{/unless}}">
+          Étape suivante
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </footer>
+    </section>
+  {{/if}}
+
+  {{#if isArchetypeStep}}
+    <section class="arkhanval-creation-guided arkhanval-creation-guided--archetypes">
+      <nav class="arkhanval-creation-progress" aria-label="Progression de la création">
+        {{#each progressSteps as |step|}}
+          <button type="button"
+                  class="{{#if step.active}}active{{/if}} {{#if step.reached}}reached{{/if}} {{#if step.locked}}locked{{/if}}"
+                  data-action="navigateStep"
+                  data-step="{{step.id}}"
+                  {{#unless step.clickable}}disabled{{/unless}}>
+            {{step.label}}
+          </button>
+        {{/each}}
+      </nav>
+
+      <div class="arkhanval-creation-step-heading">
+        <div>
+          <p class="arkhanval-creation-kicker">Étape 2</p>
+          <h2>Choisissez 2 archétypes principaux</h2>
+          <p>Les compétences peuvent ensuite être développées dans tous les archétypes, mais les deux archétypes principaux ont une place privilégiée dans la progression du personnage.</p>
+        </div>
+      </div>
+      <div class="arkhanval-creation-archetype-grid">
+        {{#each archetypeCards as |archetype|}}
+          <button type="button"
+                  class="arkhanval-creation-archetype-card {{#if archetype.selected}}selected{{/if}}"
+                  data-action="toggleArchetype"
+                  data-archetype="{{archetype.id}}"
+                  aria-pressed="{{#if archetype.selected}}true{{else}}false{{/if}}"
+                  {{#if archetype.disabled}}disabled{{/if}}
+                  {{#unless ../editable}}disabled{{/unless}}>
+            <div class="arkhanval-creation-archetype-card__top">
+              <img src="{{archetype.image}}" alt="" />
+              <strong>{{archetype.label}}</strong>
+            </div>
+            <p>{{archetype.summary}}</p>
+            <div class="arkhanval-creation-archetype-card__skills">
+              <span>Compétences associées</span>
+              <ul>
+                {{#each archetype.skills as |skill|}}
+                  <li>{{skill}}</li>
+                {{/each}}
+              </ul>
+            </div>
+          </button>
+        {{/each}}
+      </div>
+
+      {{#if elfinienMagicianWarning}}
+        <div class="arkhanval-creation-notice arkhanval-creation-notice--warning arkhanval-creation-archetype-warning">
+          <strong>Elfinien & Magicien</strong>
+          <span>À de rares exceptions, les Elfiniens ne peuvent pas devenir magiciens. Ce choix reste possible, mais doit correspondre à l’exception prévue avec le MJ.</span>
+        </div>
+      {{/if}}
+
+      <footer class="arkhanval-creation-footer arkhanval-creation-footer--actions">
+        <button type="button"
+                class="arkhanval-creation-secondary"
+                data-action="backToArks"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-arrow-left"></i>
+          Retour
+        </button>
+
+        <button type="button"
+                class="arkhanval-creation-primary"
+                data-action="nextFromArchetypes"
+                {{#unless archetypeStatus.complete}}disabled{{/unless}}
+                {{#unless editable}}disabled{{/unless}}
+                title="{{#unless archetypeStatus.complete}}Choisissez exactement 2 archétypes principaux.{{/unless}}">
+          Étape suivante
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </footer>
+    </section>
+  {{/if}}
+
+  {{#if isSkillsStep}}
+    <section class="arkhanval-creation-guided arkhanval-creation-guided--skills">
+      <nav class="arkhanval-creation-progress" aria-label="Progression de la création">
+        {{#each progressSteps as |step|}}
+          <button type="button"
+                  class="{{#if step.active}}active{{/if}} {{#if step.reached}}reached{{/if}} {{#if step.locked}}locked{{/if}}"
+                  data-action="navigateStep"
+                  data-step="{{step.id}}"
+                  {{#unless step.clickable}}disabled{{/unless}}>
+            {{step.label}}
+          </button>
+        {{/each}}
+      </nav>
+
+      <div class="arkhanval-creation-step-heading">
+        <div>
+          <p class="arkhanval-creation-kicker">Étape 3</p>
+          <h2>Compétences &amp; spécialités</h2>
+          <p>Répartissez votre budget de création, puis choisissez les spécialités prévues par votre profil.</p>
+        </div>
+      </div>
+
+
+      <div class="arkhanval-creation-skill-subnav">
+        <button type="button"
+                class="{{#if skillsPaneIsSkills}}active{{/if}}"
+                data-action="setSkillsPane"
+                data-pane="skills">
+          <strong>Compétences {{skillsStatus.budget.spent}} / {{skillsStatus.budget.total}}</strong>
+        </button>
+        <button type="button"
+                class="{{#if skillsPaneIsSpecialties}}active{{/if}}"
+                data-action="setSkillsPane"
+                data-pane="specialties">
+          <strong>Spécialités {{skillsStatus.specialties.count}} / {{skillsStatus.specialties.required}}</strong>
+        </button>
+      </div>
+
+      <div class="arkhanval-creation-skill-archetypes">
+        {{#each skillArchetypeTabs as |archetype|}}
+          <button type="button"
+                  class="{{#if archetype.active}}active{{/if}} {{#if archetype.primary}}primary{{/if}} {{#if archetype.faded}}faded{{/if}} {{#if archetype.specialtyLocked}}specialty-locked{{/if}}"
+                  data-action="setSkillArchetype"
+                  data-archetype="{{archetype.id}}"
+                  {{#if archetype.specialtyLocked}}disabled{{/if}}>
+            <img src="{{archetype.image}}" alt="" />
+            <span>
+              {{archetype.label}}{{#if archetype.purchasedSkillCount}} ({{archetype.purchasedSkillCount}}){{/if}}
+            </span>
+          </button>
+        {{/each}}
+      </div>
+
+      {{#if skillsPaneIsSkills}}
+        <section class="arkhanval-creation-skill-panel">
+          <header>
+            <div>
+              <img src="{{activeSkillArchetype.image}}" alt="" />
+              <div>
+                <p class="arkhanval-creation-kicker">{{#if activeSkillArchetype.primary}}Archétype principal{{else}}Archétype secondaire{{/if}}</p>
+                <h3>{{activeSkillArchetype.label}}</h3>
+              </div>
+            </div>
+            <span>Rang max. {{skillsStatus.budget.maxRank}}</span>
+          </header>
+
+          <div class="arkhanval-creation-skill-list">
+            {{#each creationSkillRows as |skill|}}
+              <div class="arkhanval-creation-skill-row {{#if skill.hasGrant}}has-grant{{/if}}">
+                <div class="arkhanval-creation-skill-row__name">
+                  <strong>{{skill.name}}</strong>
+                  {{#if skill.hasGrant}}
+                    <small>{{skill.grantLabel}}</small>
+                  {{/if}}
+                </div>
+
+                <div class="arkhanval-creation-skill-row__cost">
+                  <span>Coût</span>
+                  <b>{{skill.costDisplay}}</b>
+                </div>
+
+                <div class="arkhanval-creation-skill-stepper">
+                  <button type="button"
+                          data-action="adjustCreationSkill"
+                          data-skill="{{skill.identifier}}"
+                          data-delta="-1"
+                          {{#unless skill.canDecrease}}disabled{{/unless}}>−</button>
+                  <b>{{skill.rank}}</b>
+                  {{#if skill.canIncrease}}
+                    <button type="button"
+                            data-action="adjustCreationSkill"
+                            data-skill="{{skill.identifier}}"
+                            data-delta="1">+</button>
+                  {{else}}
+                    <span class="arkhanval-creation-skill-stepper__empty" aria-hidden="true"></span>
+                  {{/if}}
+                </div>
+
+                {{#if skill.hasPostCreationBonus}}
+                  <div class="arkhanval-creation-skill-final">
+                    final <strong>{{skill.finalRank}}</strong>
+                  </div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+
+          {{#if skillsStatus.budget.unusedSkillBonus}}
+            <div class="arkhanval-creation-notice arkhanval-creation-notice--warning">
+              Il reste {{skillsStatus.budget.unusedSkillBonus}} point(s) du bonus humain. Ce bonus est réservé aux compétences et ne peut pas être gardé pour des sortilèges.
+            </div>
+          {{/if}}
+
+          {{#if isMagicianPrimary}}
+            <div class="arkhanval-creation-notice">
+              Points de base non dépensés : <strong>{{skillsStatus.budget.baseRemaining}}</strong>. Ils peuvent être gardés de côté pour des sortilèges.
+            </div>
+          {{/if}}
+        </section>
+      {{/if}}
+
+      {{#if skillsPaneIsSpecialties}}
+        {{#if specialtyDualPrimaryView}}
+          <div class="arkhanval-creation-specialty-dual">
+            {{#each creationSpecialtyPanels as |panel|}}
+              <section class="arkhanval-creation-specialty-panel">
+                <header>
+                  <div>
+                    <img src="{{panel.image}}" alt="" />
+                    <div>
+                      <p class="arkhanval-creation-kicker">{{#if panel.primary}}Archétype principal{{else}}Archétype secondaire{{/if}}</p>
+                      <h3>{{panel.label}}</h3>
+                    </div>
+                  </div>
+                </header>
+
+                <div class="arkhanval-creation-specialty-list">
+                  {{#each panel.rows as |specialty|}}
+                    <article class="arkhanval-creation-specialty-card {{#if specialty.selected}}selected{{/if}}">
+                      <div class="arkhanval-creation-specialty-card__body">
+                        <div>
+                          <strong>{{specialty.name}}</strong>
+                          {{#if specialty.repeatable}}<span>répétable</span>{{/if}}
+                        </div>
+                        <p>{{specialty.description}}</p>
+                      </div>
+
+                      <div class="arkhanval-creation-specialty-stepper">
+                        <button type="button"
+                                data-action="adjustCreationSpecialty"
+                                data-specialty="{{specialty.id}}"
+                                data-delta="-1"
+                                {{#unless specialty.canRemove}}disabled{{/unless}}>−</button>
+                        <b>{{specialty.count}}</b>
+                        <button type="button"
+                                data-action="adjustCreationSpecialty"
+                                data-specialty="{{specialty.id}}"
+                                data-delta="1"
+                                {{#unless specialty.canAdd}}disabled{{/unless}}>+</button>
+                      </div>
+                    </article>
+                  {{/each}}
+                </div>
+              </section>
+            {{/each}}
+          </div>
+        {{else}}
+          {{#each creationSpecialtyPanels as |panel|}}
+            <section class="arkhanval-creation-specialty-panel">
+              <header>
+                <div>
+                  <img src="{{panel.image}}" alt="" />
+                  <div>
+                    <p class="arkhanval-creation-kicker">{{#if panel.primary}}Archétype principal{{else}}Archétype secondaire{{/if}}</p>
+                    <h3>{{panel.label}}</h3>
+                  </div>
+                </div>
+              </header>
+
+              {{#unless panel.primary}}
+                <div class="arkhanval-creation-notice">
+                  {{#if ../skillsStatus.specialties.allowedSecondary}}
+                    Le profil Vieux briscard peut consacrer au maximum une spécialité à un archétype secondaire.
+                  {{else}}
+                    Ce profil choisit ses spécialités uniquement dans ses deux archétypes principaux.
+                  {{/if}}
+                </div>
+              {{/unless}}
+
+              <div class="arkhanval-creation-specialty-list">
+                {{#each panel.rows as |specialty|}}
+                  <article class="arkhanval-creation-specialty-card {{#if specialty.selected}}selected{{/if}}">
+                    <div class="arkhanval-creation-specialty-card__body">
+                      <div>
+                        <strong>{{specialty.name}}</strong>
+                        {{#if specialty.repeatable}}<span>répétable</span>{{/if}}
+                      </div>
+                      <p>{{specialty.description}}</p>
+                    </div>
+
+                    <div class="arkhanval-creation-specialty-stepper">
+                      <button type="button"
+                              data-action="adjustCreationSpecialty"
+                              data-specialty="{{specialty.id}}"
+                              data-delta="-1"
+                              {{#unless specialty.canRemove}}disabled{{/unless}}>−</button>
+                      <b>{{specialty.count}}</b>
+                      <button type="button"
+                              data-action="adjustCreationSpecialty"
+                              data-specialty="{{specialty.id}}"
+                              data-delta="1"
+                              {{#unless specialty.canAdd}}disabled{{/unless}}>+</button>
+                    </div>
+                  </article>
+                {{/each}}
+              </div>
+            </section>
+          {{/each}}
+        {{/if}}
+
+        {{#if selectedSpecialtySummary.length}}
+          <div class="arkhanval-creation-specialty-summary">
+            <span>Sélection actuelle</span>
+            <div>
+              {{#each selectedSpecialtySummary as |specialty|}}
+                <strong class="{{#if specialty.secondary}}secondary{{/if}}">
+                  {{specialty.name}} <small>· {{specialty.archetype}}</small>
+                  <button type="button"
+                          class="arkhanval-creation-specialty-summary__remove"
+                          data-action="removeCreationSpecialty"
+                          data-specialty="{{specialty.id}}"
+                          title="Retirer {{specialty.name}}"
+                          aria-label="Retirer {{specialty.name}}">
+                    ×
+                  </button>
+                </strong>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+
+        <div class="arkhanval-creation-notice">
+          Certaines spécialités peuvent être acquises plusieurs fois ou demandent une précision (compétence, arme, domaine, matériau…). Ces précisions pourront être indiquées directement dans la description de la spécialité sur la fiche de personnage.
+        </div>
+      {{/if}}
+
+      <footer class="arkhanval-creation-footer arkhanval-creation-footer--actions">
+        <button type="button"
+                class="arkhanval-creation-secondary"
+                data-action="backToArchetypes"
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-arrow-left"></i>
+          Retour
+        </button>
+
+        <button type="button"
+                class="arkhanval-creation-reset"
+                data-action="resetCreationSkills"
+                {{#unless canResetSkills}}disabled{{/unless}}
+                {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          Réinitialiser
+        </button>
+
+        <button type="button"
+                class="arkhanval-creation-primary"
+                data-action="nextFromSkills"
+                {{#unless skillsStatus.valid}}disabled{{/unless}}
+                {{#unless editable}}disabled{{/unless}}
+                title="{{#unless skillsStatus.valid}}Complétez vos spécialités et corrigez toute allocation invalide.{{/unless}}">
+          Étape suivante
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </footer>
+    </section>
+  {{/if}}
+
+  {{#if isSummaryStep}}
+    <section class="arkhanval-creation-guided arkhanval-creation-guided--summary">
+      <nav class="arkhanval-creation-progress" aria-label="Progression de la création">
+        {{#each progressSteps as |step|}}
+          <button type="button"
+                  class="{{#if step.active}}active{{/if}} {{#if step.reached}}reached{{/if}} {{#if step.locked}}locked{{/if}}"
+                  data-action="navigateStep"
+                  data-step="{{step.id}}"
+                  {{#unless step.clickable}}disabled{{/unless}}>
+            {{step.label}}
+          </button>
+        {{/each}}
+      </nav>
+
+      <div class="arkhanval-creation-step-heading">
+        <div>
+          <p class="arkhanval-creation-kicker">Dernière étape</p>
+          <h2>Récapitulatif</h2>
+        </div>
+      </div>
+
+      <div class="arkhanval-creation-summary-grid">
+        <section class="arkhanval-creation-summary-card arkhanval-creation-summary-card--identity">
+          <strong>{{summaryProfile.label}}</strong>
+        </section>
+        <section class="arkhanval-creation-summary-card arkhanval-creation-summary-card--identity arkhanval-creation-summary-card--people">
+          <img src="{{summaryPeople.image}}" alt="" />
+          <strong>{{summaryPeople.label}}</strong>
+        </section>
+      </div>
+
+      <section class="arkhanval-creation-summary-section arkhanval-creation-summary-section--arks">
+        <header><p class="arkhanval-creation-kicker">Arks</p></header>
+        <div class="arkhanval-creation-summary-arks">
+          {{#each summaryArks as |ark|}}
+            <article>
+              <img src="{{ark.image}}" alt="" />
+              <div>
+                <strong>{{ark.label}}</strong>
+                <span>Rang {{ark.rank}}</span>
+                <small>{{ark.circlesLabel}}</small>
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="arkhanval-creation-summary-section">
+        <header><p class="arkhanval-creation-kicker">Archétypes</p></header>
+        <div class="arkhanval-creation-summary-archetypes">
+          {{#each summaryArchetypes as |archetype|}}
+            <article><img src="{{archetype.image}}" alt="" /><strong>{{archetype.label}}</strong></article>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="arkhanval-creation-summary-section">
+        <header>
+          <p class="arkhanval-creation-kicker">Compétences</p>
+          <span>{{summarySkillRemainingLabel}}</span>
+        </header>
+
+        {{#if summarySkills.length}}
+          <div class="arkhanval-creation-summary-list">
+            {{#each summarySkills as |skill|}}
+              <article>
+                <div>
+                  <strong>{{skill.name}}</strong>
+                  <small>{{skill.archetypeLabel}}</small>
+                  {{#if skill.hasGrant}}<em>{{skill.grantLabel}}</em>{{/if}}
+                </div>
+                <b>Rang {{skill.finalRank}}</b>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="arkhanval-creation-notice">Aucune compétence acquise.</div>
+        {{/if}}
+
+        {{#if summaryUnusedHumanBonus}}
+          <div class="arkhanval-creation-notice arkhanval-creation-notice--warning">
+            {{summaryUnusedHumanBonusLabel}}.
+          </div>
+        {{/if}}
+
+        {{#if summaryHasMagician}}
+          {{#if summaryBaseRemaining}}
+            <div class="arkhanval-creation-notice">
+              {{summaryBaseRemainingLabel}}. La gestion des sortilèges n’est pas automatisée dans cet assistant.
+            </div>
+          {{/if}}
+        {{/if}}
+      </section>
+
+      <section class="arkhanval-creation-summary-section">
+        <header><p class="arkhanval-creation-kicker">Spécialités</p></header>
+        <div class="arkhanval-creation-summary-specialties">
+          {{#each summarySpecialties as |specialty|}}
+            <article><strong>{{specialty.name}}</strong><small>{{specialty.archetypeLabel}}</small></article>
+          {{/each}}
+        </div>
+        <div class="arkhanval-creation-notice">
+          Certaines spécialités demandent une précision (compétence, arme, domaine, matériau…). Ces précisions pourront être indiquées directement dans la description de la spécialité sur la fiche de personnage.
+        </div>
+      </section>
+
+      <div class="arkhanval-creation-notice arkhanval-creation-notice--info">
+        En finalisant la création, toutes les informations seront reportées sur la fiche de personnage. L’outil de création ne sera ensuite plus accessible pour ce personnage.
+      </div>
+
+      <footer class="arkhanval-creation-footer arkhanval-creation-footer--actions">
+        <button type="button" class="arkhanval-creation-secondary" data-action="backToSkills" {{#unless editable}}disabled{{/unless}}>
+          <i class="fa-solid fa-arrow-left"></i> Retour
+        </button>
+        <button type="button"
+                class="arkhanval-creation-primary arkhanval-creation-primary--finalize"
+                data-action="finalizeCreation"
+                {{#unless finalCreationValid}}disabled{{/unless}}
+                {{#unless editable}}disabled{{/unless}}>
+          Finaliser la création <i class="fa-solid fa-check"></i>
+        </button>
+      </footer>
+    </section>
+  {{/if}}
+
+</div>

@@ -1,0 +1,120 @@
+{
+  "id": "arkhanval",
+  "title": "Arkhanval",
+  "description": "Système de jeu de rôle Arkhanval pour Foundry Virtual Tabletop v14 — version bêta 0.9.0.",
+  "version": "0.9.0",
+  "compatibility": {
+    "minimum": 14,
+    "verified": 14
+  },
+  "esmodules": [
+    "arkhanval.mjs"
+  ],
+  "styles": [
+    "styles/arkhanval.css",
+    "styles/item-sheets.css",
+    "styles/richtext/arkhanval-richtext.css"
+  ],
+  "languages": [
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": [
+          "identity.appearance",
+          "notes.arks"
+        ]
+      }
+    },
+    "Item": {
+      "weapon": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "book": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "skill": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "equipment": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "wound": {
+        "htmlFields": [
+          "description",
+          "notes"
+        ]
+      },
+      "people": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "spell": {
+        "htmlFields": [
+          "description",
+          "specialization"
+        ]
+      },
+      "specialty": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "state": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "work": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "trait": {
+        "htmlFields": [
+          "description"
+        ]
+      }
+    }
+  },
+  "socket": true,
+  "background": "systems/arkhanval/assets/banners/system/arkhanval-system.webp",
+  "bugs": "https://github.com/ctotone/BETA-TEST-Arkhanval/issues",
+  "packs": [
+    {
+      "name": "guide-dutilisation-du-systeme",
+      "label": "Guides du système de jeu",
+      "path": "packs/guide-dutilisation-du-systeme",
+      "type": "JournalEntry",
+      "system": "arkhanval",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "banner": "systems/arkhanval/assets/banners/compendiums/arkhanval-base.webp",
+      "flags": {}
+    }
+  ],
+  "url": "https://github.com/ctotone/BETA-TEST-Arkhanval",
+  "manifest": "https://raw.githubusercontent.com/ctotone/BETA-TEST-Arkhanval/main/system.json",
+  "download": "https://github.com/ctotone/BETA-TEST-Arkhanval/releases/download/0.9.0/arkhanval.zip"
+}
