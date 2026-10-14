@@ -53,14 +53,13 @@
       <button type="button"
               class="arkhanval-creation-route arkhanval-creation-route--npc"
               data-action="npcCreation"
-              disabled>
+              {{#unless canCreateNpc}}disabled{{/unless}}>
         <span class="arkhanval-creation-route__visual">
           <img src="systems/arkhanval/assets/creation/route-npc.webp" alt="Illustration de création de PNJ" />
         </span>
         <span class="arkhanval-creation-route__body">
           <strong>Création de PNJ</strong>
-          <span>La création guidée des PNJ sera proposée ultérieurement.</span>
-          <em>À venir</em>
+          <span>Ouvrir une fiche PNJ compacte, avec choix du lien du prototype de Token.</span>
         </span>
       </button>
     </section>

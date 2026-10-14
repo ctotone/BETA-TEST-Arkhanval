@@ -1,0 +1,541 @@
+/* ARKHANVAL — Fiche PNJ
+ * Présentation UNIQUEMENT. Le comportement, les documents, les contrôles
+ * du MJ et le moteur restent partagés avec la feuille PJ.
+ * Les teintes, contrôles et polices viennent des tokens du design system.
+ */
+.arkhanval-character-sheet .arkhanval-sheet-shell--npc {
+  --arkhanval-npc-line: var(--arkhanval-separator-soft);
+  grid-template-columns: minmax(0, 1fr);
+}
+.arkhanval-character-sheet .arkhanval-npc-scroll {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 10px 12px 20px;
+  scrollbar-gutter: stable;
+}
+.arkhanval-character-sheet .arkhanval-npc-page {
+  width: 830px;
+  min-height: 557px;
+  padding: 38px 40px 34px;
+  background: url('../assets/sheets/common/background_arkhanval.webp') center top / 100% 100% no-repeat,
+              var(--arkhanval-surface-paper);
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font-family: var(--arkhanval-font-body);
+  box-sizing: border-box;
+}
+.arkhanval-character-sheet .arkhanval-npc-page *,
+.arkhanval-character-sheet .arkhanval-npc-page *::before,
+.arkhanval-character-sheet .arkhanval-npc-page *::after { box-sizing: border-box; }
+
+/* Entêtes : même fonte Faculty Glyphic, même hiérarchie bleu / rouge que PJ. */
+.arkhanval-character-sheet .arkhanval-npc-page h3,
+.arkhanval-character-sheet .arkhanval-npc-field > span {
+  display: block;
+  margin: 0;
+  color: var(--arkhanval-sheet-red, var(--arkhanval-color-red));
+  font: 15px/1.08 var(--arkhanval-font-display);
+  text-align: center;
+  font-weight: 400;
+}
+.arkhanval-character-sheet .arkhanval-npc-field > span,
+.arkhanval-character-sheet .arkhanval-npc-footer h3 {
+  color: var(--arkhanval-sheet-blue, var(--arkhanval-color-blue));
+}
+
+/* Le nom et les deux champs d'identité retrouvent le fond de saisie réel PJ.
+ * Aucun rectangle/bloc de formulaire superposé au parchemin. */
+.arkhanval-character-sheet .arkhanval-npc-name {
+  position: relative;
+  margin: -3px 0 7px;
+  padding: 2px 30px 3px;
+  height: 36px;
+  background: url('../assets/sheets/page1/fond_saisie.webp') center / 100% 100% no-repeat;
+  border: 0;
+  box-shadow: none;
+}
+.arkhanval-character-sheet .arkhanval-npc-name input[type='text'] {
+  display: block;
+  width: 100%;
+  height: 29px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 5px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font: 19px/29px var(--arkhanval-font-display);
+  text-align: center;
+}
+.arkhanval-character-sheet .arkhanval-npc-upper {
+  display: grid;
+  grid-template-columns: 1.25fr .95fr .45fr;
+  gap: 12px;
+  min-height: 205px;
+  margin-bottom: 10px;
+}
+.arkhanval-character-sheet .arkhanval-npc-identity-left,
+.arkhanval-character-sheet .arkhanval-npc-combat {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.arkhanval-character-sheet .arkhanval-npc-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.arkhanval-character-sheet .arkhanval-npc-field {
+  display: grid;
+  grid-template-rows: 17px 27px;
+  gap: 0;
+  min-width: 0;
+}
+.arkhanval-character-sheet .arkhanval-npc-field input[type='text'] {
+  width: 100%;
+  min-width: 0;
+  height: 27px;
+  min-height: 0;
+  margin: 0;
+  padding: 3px 5px;
+  background: url('../assets/sheets/page1/fond_saisie.webp') center / 100% 100% no-repeat;
+  border: 0;
+  box-shadow: none;
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font: 12px/19px var(--arkhanval-font-display);
+  text-align: center;
+}
+.arkhanval-character-sheet .arkhanval-npc-page :is(input, select, textarea):focus-visible,
+.arkhanval-character-sheet .arkhanval-npc-page button:focus-visible {
+  outline: 2px solid var(--arkhanval-focus-color);
+  outline-offset: 1px;
+}
+.arkhanval-character-sheet .arkhanval-npc-page :is(input, select, textarea):disabled {
+  opacity: 1;
+  color: var(--arkhanval-color-muted);
+}
+
+/* Carte générique (surfaces neutres de la feuille officielle). Les seules
+ * textures de cartes sont réservées aux colonnes de compétences et aux blessures. */
+.arkhanval-character-sheet .arkhanval-npc-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 7px 10px 8px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: url('../assets/sheets/page1/fond_saisie.webp') center / 100% 100% no-repeat;
+}
+.arkhanval-character-sheet .arkhanval-npc-section h3 {
+  flex: 0 0 auto;
+  margin: 0 0 4px;
+}
+.arkhanval-character-sheet .arkhanval-npc-section-body,
+.arkhanval-character-sheet .arkhanval-npc-list {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--arkhanval-border-default) transparent;
+}
+.arkhanval-character-sheet .arkhanval-npc-gear { flex: 1 1 auto; max-height: 112px; }
+.arkhanval-character-sheet .arkhanval-npc-armor { flex: 0 0 76px; }
+.arkhanval-character-sheet .arkhanval-npc-weapons { flex: 1 1 auto; max-height: 160px; }
+
+/* Les liens d'Items et les jets sont les vrais boutons métier de la fiche PJ :
+ * leurs classes arkhanval-item-link / arkhanval-skill-action et
+ * arkhanval-specialty-item empêchent les règles d'action génériques rouges
+ * de les traiter comme des boutons de confirmation. */
+.arkhanval-character-sheet .arkhanval-npc-item-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 19px;
+  border-bottom: 1px solid var(--arkhanval-npc-line);
+  padding: 0 2px;
+}
+.arkhanval-character-sheet .arkhanval-npc-item-row .arkhanval-item-link,
+.arkhanval-character-sheet .arkhanval-npc-skill-row .arkhanval-skill-action,
+.arkhanval-character-sheet .arkhanval-npc-specialties .arkhanval-specialty-item {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 1px 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--arkhanval-sheet-archetype, var(--arkhanval-color-green));
+  font: 10px/1.28 'Arkhanval Radio Canada SemiCondensed', var(--arkhanval-font-body);
+  font-weight: 500;
+  text-align: left;
+  text-transform: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.arkhanval-character-sheet .arkhanval-npc-item-row .arkhanval-item-link:hover,
+.arkhanval-character-sheet .arkhanval-npc-skill-row .arkhanval-skill-action:hover,
+.arkhanval-character-sheet .arkhanval-npc-specialties .arkhanval-specialty-item:hover {
+  background: rgb(255 255 255 / 18%);
+  color: var(--arkhanval-sheet-red, var(--arkhanval-color-red));
+  text-decoration: underline;
+}
+.arkhanval-character-sheet .arkhanval-npc-item-meta {
+  flex: 0 0 auto;
+  color: var(--arkhanval-color-muted);
+  font: 9px/1.1 var(--arkhanval-font-body);
+}
+/* Case Armure portée : même convention graphique que la fiche PJ.
+ * On masque entièrement le contrôle natif pour éviter spin-buttons,
+ * redimensionnements et sauts de ligne durant une mise à jour d'Item. */
+.arkhanval-character-sheet .arkhanval-npc-item-row .arkhanval-npc-armor-equipped {
+  position: relative;
+  flex: 0 0 17px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 18px;
+  min-width: 17px;
+  min-height: 18px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check::before,
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check::after { content: none !important; }
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__check {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border: 1px solid rgb(92 75 55 / 58%);
+  border-radius: 3px;
+  background: rgb(255 252 245 / 92%);
+  box-shadow: inset 0 1px 1px rgb(68 49 32 / 10%);
+}
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check:checked + .arkhanval-item-tags__check {
+  border-color: var(--arkhanval-item-gold);
+  background: var(--arkhanval-item-gold);
+}
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check:checked + .arkhanval-item-tags__check::after {
+  content: '✓';
+  font: 800 11px/1 sans-serif;
+  color: #fffaf0;
+}
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check:focus-visible + .arkhanval-item-tags__check {
+  outline: 2px solid var(--arkhanval-focus-color);
+  outline-offset: 1px;
+}
+.arkhanval-character-sheet .arkhanval-npc-armor-equipped .arkhanval-item-tags__native-check:disabled + .arkhanval-item-tags__check {
+  opacity: .55;
+  cursor: default;
+}
+.arkhanval-character-sheet .arkhanval-npc-empty {
+  margin: 3px 0;
+  color: var(--arkhanval-color-muted);
+  font: italic 10px var(--arkhanval-font-body);
+  text-align: center;
+}
+
+/* Icônes d'ajout sobres, calées sur le raccourci Item. */
+.arkhanval-character-sheet .arkhanval-npc-adds {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-height: 16px;
+}
+.arkhanval-character-sheet .arkhanval-npc-adds .arkhanval-item-add,
+.arkhanval-character-sheet .arkhanval-npc-section > .arkhanval-npc-add {
+  position: static;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  width: auto;
+  height: 16px;
+  min-width: 0;
+  min-height: 0;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--arkhanval-sheet-red, var(--arkhanval-color-red));
+  font: 10px/1.1 var(--arkhanval-font-body);
+  cursor: pointer;
+}
+.arkhanval-character-sheet .arkhanval-npc-section > .arkhanval-npc-add { align-self: flex-end; }
+.arkhanval-character-sheet .arkhanval-npc-adds .arkhanval-item-add:hover,
+.arkhanval-character-sheet .arkhanval-npc-section > .arkhanval-npc-add:hover {
+  color: var(--arkhanval-color-red-hover);
+  text-decoration: underline;
+}
+
+/* Rangs Ark : sans cercles ni XP, dans le style des champs d'arks PJ. */
+.arkhanval-character-sheet .arkhanval-npc-arks {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.arkhanval-character-sheet .arkhanval-npc-arks label {
+  display: grid;
+  grid-template-rows: 28px 21px;
+  justify-items: center;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 0;
+  min-width: 0;
+}
+.arkhanval-character-sheet .arkhanval-npc-ark img {
+  order: 2;
+  display: block;
+  width: 100%;
+  max-width: 110px;
+  height: 21px;
+  object-fit: contain;
+  pointer-events: none;
+}
+.arkhanval-character-sheet .arkhanval-npc-arks input[type='number'] {
+  width: 34px;
+  height: 25px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 3px;
+  border: 1px solid var(--arkhanval-color-green);
+  border-radius: var(--arkhanval-control-radius);
+  background: var(--arkhanval-control-background);
+  box-shadow: var(--arkhanval-control-inset-shadow);
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font: 12px/1.2 var(--arkhanval-font-body);
+  text-align: center;
+}
+
+/* Blessures : symboles papier discrets, mêmes variables de palette. */
+.arkhanval-character-sheet .arkhanval-npc-wounds {
+  padding: 7px 5px 6px;
+  align-items: stretch;
+  /* Fond vertical d'Ark de la fiche PJ : proportions adaptées au bloc Blessures. */
+  background-image: url('../assets/sheets/page1/fond_arks.webp');
+}
+.arkhanval-character-sheet .arkhanval-npc-wounds h3 {
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font-size: 13px;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-group { padding: 3px 0; text-align: center; }
+.arkhanval-character-sheet .arkhanval-npc-wound-group b,
+.arkhanval-character-sheet .arkhanval-npc-wound-group small { display: block; }
+.arkhanval-character-sheet .arkhanval-npc-wound-group b {
+  font: 600 9px/1.1 var(--arkhanval-font-body);
+  text-transform: uppercase;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-group small { font-size: 8px; }
+.arkhanval-character-sheet .arkhanval-npc-wound-marks {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-marks label {
+  position: relative;
+  display: block;
+  width: 11px;
+  height: 11px;
+  cursor: pointer;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-marks label[hidden] { display: none; }
+.arkhanval-character-sheet .arkhanval-npc-wound-marks input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-marks input::before,
+.arkhanval-character-sheet .arkhanval-npc-wound-marks input::after {
+  content: none !important;
+  display: none !important;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-marks span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin: 1px;
+  border: 1px solid var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  background: var(--arkhanval-surface-paper-strong);
+  transform: rotate(45deg);
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-marks input:checked + span {
+  background: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3px;
+  margin-top: 5px;
+  font-size: 9px;
+}
+.arkhanval-character-sheet .arkhanval-npc-wound-stat output {
+  min-width: 25px;
+  padding: 0 3px;
+  border: 1px solid var(--arkhanval-border-default);
+  background: var(--arkhanval-surface-paper-soft);
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  text-align: center;
+  font-weight: 600;
+}
+.arkhanval-character-sheet .arkhanval-npc-state-manager.arkhanval-state-item {
+  align-self: center;
+  margin-top: 4px;
+  font-size: 9px;
+}
+
+/* Colonnes de compétences : vrai papier d'archétype de la fiche PJ,
+ * typographie verte + boîtes de rang discrètes. */
+.arkhanval-character-sheet .arkhanval-npc-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  height: 260px;
+  margin: 10px 0 7px;
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-card {
+  height: 260px;
+  max-height: 260px;
+  padding: 12px 10px 12px;
+  background-image: url('../assets/sheets/page1/fond_archetype.webp');
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-card header {
+  display: flex;
+  flex: 0 0 auto;
+  min-height: 25px;
+  margin-bottom: 4px;
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-card header select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 25px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 13px 0 3px;
+  border: 0;
+  border-bottom: 1px solid var(--arkhanval-separator-soft);
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--arkhanval-sheet-archetype, var(--arkhanval-color-green));
+  font: 14px/1.2 var(--arkhanval-font-display);
+  text-align: center;
+  cursor: pointer;
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-card h3 {
+  min-height: 25px;
+  margin-bottom: 4px;
+  color: var(--arkhanval-sheet-archetype, var(--arkhanval-color-green));
+  font: 13px/25px var(--arkhanval-font-display);
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-lines {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--arkhanval-border-default) transparent;
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  margin: 0;
+  padding: 0 1px;
+  border-bottom: 1px solid var(--arkhanval-npc-line);
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-row .arkhanval-skill-action {
+  padding-right: 3px;
+  font-size: 10px;
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-row input.arkhanval-npc-skill-rank {
+  flex: 0 0 27px;
+  width: 27px;
+  height: 20px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 2px;
+  border: 1px solid rgb(105 111 83 / 72%);
+  border-radius: var(--arkhanval-control-radius);
+  background: var(--arkhanval-control-background);
+  box-shadow: var(--arkhanval-control-inset-shadow);
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font: 10px/1 var(--arkhanval-font-body);
+  text-align: center;
+  appearance: textfield;
+}
+.arkhanval-character-sheet .arkhanval-npc-skill-row input.arkhanval-npc-skill-rank::-webkit-inner-spin-button,
+.arkhanval-character-sheet .arkhanval-npc-skill-row input.arkhanval-npc-skill-rank::-webkit-outer-spin-button { appearance: none; margin: 0; }
+
+/* Pied de fiche : spécialités / notes en parchemin, sans badges rouges. */
+.arkhanval-character-sheet .arkhanval-npc-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  height: 81px;
+}
+.arkhanval-character-sheet .arkhanval-npc-footer > .arkhanval-npc-section {
+  min-height: 0;
+  padding: 7px 10px 8px;
+}
+.arkhanval-character-sheet .arkhanval-npc-footer h3 { font-size: 13px; }
+.arkhanval-character-sheet .arkhanval-npc-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 2px 7px;
+}
+.arkhanval-character-sheet .arkhanval-npc-specialties .arkhanval-specialty-item {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 2px 5px;
+  border-bottom: 1px solid var(--arkhanval-separator-soft);
+  font-size: 10px;
+}
+.arkhanval-character-sheet .arkhanval-npc-footer textarea[data-npc-notes] {
+  width: 100%;
+  min-height: 0;
+  height: 47px;
+  padding: 3px 5px;
+  border: 0;
+  border-radius: 0;
+  background: rgb(255 252 245 / 35%);
+  box-shadow: none;
+  color: var(--arkhanval-sheet-black, var(--arkhanval-color-ink));
+  font: 11px/1.3 var(--arkhanval-font-body);
+  resize: none;
+}

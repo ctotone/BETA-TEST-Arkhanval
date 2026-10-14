@@ -1094,6 +1094,7 @@ async function promptArtCreditD10Selection(result) {
 }
 
 function combatArkRerollDiceCount(actor, result) {
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return 0;
   const attemptIndex = Number(result?.selectedAttemptIndex);
   if (!Number.isInteger(attemptIndex) || attemptIndex < 0) return 0;
 
@@ -1184,10 +1185,18 @@ function combatRenderOptions(combat) {
   };
 }
 
-async function updateCombatMessage(message, nextCombat) {
+async function updateCombatMessage(message, proposedCombat) {
+  // Ne jamais muter le snapshot d'entrée : l'état sauvegardé reste le même
+  // instantané que celui qui sert à construire la carte.
+  const nextCombat = documentSafeClone(proposedCombat);
   const result = nextCombat?.attackResult ?? null;
   if (!result) throw new Error("Résultat d’attaque introuvable dans la carte de combat.");
 
+  // Les cartes existantes peuvent encore contenir une proposition XP historique.
+  // La suppression porte sur l'Actor du message, notamment synthétique si token non lié.
+  if (message.speakerActor?.getFlag?.("arkhanval", "viewMode") === "npc") {
+    nextCombat.chatOptions = { ...(nextCombat.chatOptions ?? {}), experienceSource: null };
+  }
   const spellResolution = message.getFlag?.("arkhanval", "spellResolution") ?? null;
   const content = String(spellResolution?.mode ?? "") === "opposed"
     ? buildUnifiedSpellOppositionChatContent(spellResolution, nextCombat)
@@ -3833,6 +3842,14 @@ async function applyCombatArkDecision(payload) {
   const choice = String(payload.choice ?? "");
   if (!["yes", "no"].includes(choice)) return;
 
+  if (choice === "yes") {
+    const target = side === "attacker"
+      ? combat?.context?.attacker ?? null
+      : targetByKey(combat, payload.targetKey);
+    const actor = await actorFromTarget(target);
+    if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return;
+  }
+
   if (side === "attacker") {
     const current = normalizeCombatArkDecision(combat.attackerArk);
     if (current.locked) return;
@@ -4747,6 +4764,7 @@ async function resolveCombatArkChoiceLocally(message, combat, {
     ui.notifications?.warn?.("Arkhanval | Résultat de combat introuvable pour la relance d’Ark.");
     return false;
   }
+  if (actor.getFlag?.("arkhanval", "viewMode") === "npc") return false;
 
   const reroll = await promptArkRerollSelection(actor, result);
   if (!reroll) return false;

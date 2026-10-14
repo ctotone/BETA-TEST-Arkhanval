@@ -399,7 +399,11 @@ function requestFromForm(
     ? selectedSkillFromForm(formData, bySkillKey)
     : null;
 
-  const arkBoost = String(readFormValue(formData, "arkBoost", ""));
+  // En mode PNJ, le rang d'Ark reste utilisable comme source de jet,
+  // mais aucun cercle d'Ark ne peut être dépensé (même si le formulaire est forgé).
+  const arkBoost = actor?.getFlag?.("arkhanval", "viewMode") === "npc"
+    ? ""
+    : String(readFormValue(formData, "arkBoost", ""));
   const diceModifier = asNumber(formData, "diceModifier", 0) + (arkBoost ? 2 : 0);
   const resolvedCombatBase = combatContextFromForm(formData, combatContext);
 
@@ -738,6 +742,7 @@ function updatePreview(
 
 
 function buildArkSpendOptions(actor) {
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return "";
   return ARKHANVAL_ARKS
     .map((ark) => ({
       ...ark,

@@ -3280,7 +3280,7 @@
 }
 
 /* ------------------------------------------------------------------------- */
-/* Phase 05B C01 — Page 1 dynamic reconstruction                             */
+/* Reconstruction dynamique de la page 1. */
 /* ------------------------------------------------------------------------- */
 
 .arkhanval-character-sheet {
@@ -4469,7 +4469,7 @@
   background: var(--arkhanval-sheet-black);
 }
 
-/* Phase 05B C05: editable portrait uses Foundry's native editImage action. */
+/* Portrait éditable via l'action native editImage de Foundry. */
 .arkhanval-character-sheet .arkhanval-sheet-page-1--dynamic .arkhanval-portrait[data-action="editImage"] {
   cursor: pointer;
 }
@@ -4478,7 +4478,7 @@
   filter: brightness(1.04);
 }
 
-/* Phase 06A — declarative rules and semantic tags ------------------------ */
+/* Règles déclaratives et tags sémantiques. */
 
 .arkhanval-item-rules__header {
   display: flex;
@@ -13276,7 +13276,7 @@ button.arkhanval-preroll-native-submit { display: none !important; }
 .arkhanval-resolution-card__stat {
   display: grid;
   gap: 2px;
-  padding: 9px 8px;
+  padding: 5px 8px;
   text-align: center;
 }
 
@@ -13286,7 +13286,7 @@ button.arkhanval-preroll-native-submit { display: none !important; }
 
 .arkhanval-resolution-card__stat-label {
   color: rgb(65 58 49 / 82%);
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   font-weight: 700;
   line-height: 1.1;
 }
@@ -13328,7 +13328,7 @@ button.arkhanval-preroll-native-submit { display: none !important; }
   display: grid;
   justify-items: center;
   gap: 2px;
-  padding: 11px 10px 12px;
+  padding: 7px 10px 7px;
   cursor: pointer;
 }
 
@@ -15837,4 +15837,58 @@ button.arkhanval-preroll-native-submit { display: none !important; }
     transition-duration: 0s !important;
     animation-duration: 0s !important;
   }
+}
+
+/* Carnet PJ : même parchemin que les pages 2 et 3,
+ * page de 900px minimum, extensible pour permettre le scroll du conteneur
+ * existant. Un seul cadre blanc, édition ProseMirror native Foundry v14.
+ */
+.arkhanval-character-sheet .arkhanval-sheet-page--player-notes {
+  min-height: 900px;
+  height: auto;
+  overflow: visible;
+}
+
+/* Le logo occupe l'en-tête commun de 116px (pages 2 et 3) ;
+ * le carnet commence juste au-dessous, sans grand espace superflu. */
+.arkhanval-character-sheet .arkhanval-player-notes {
+  padding: 16px 50px 52px;
+  min-height: 784px;
+  box-sizing: border-box;
+}
+
+.arkhanval-character-sheet .arkhanval-player-notes__field {
+  width: 100%;
+  min-height: 750px;
+  box-sizing: border-box;
+  padding: 20px 22px;
+  border: 1px solid rgb(103 82 56 / 28%);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--arkhanval-ink);
+  box-shadow: 0 1px 3px rgb(55 42 27 / 12%);
+}
+
+/* La zone de lecture et l'éditeur grandissent avec les notes ; le défilement
+ * se fait sur la page de fiche, jamais dans un mini-cadre de texte. */
+.arkhanval-character-sheet .arkhanval-player-notes__field .editor,
+.arkhanval-character-sheet .arkhanval-player-notes__field .editor-content,
+.arkhanval-character-sheet .arkhanval-player-notes__field prose-mirror,
+.arkhanval-character-sheet .arkhanval-player-notes__field .prosemirror,
+.arkhanval-character-sheet .arkhanval-player-notes__field .ProseMirror {
+  width: 100%;
+  min-height: 705px;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+}
+
+.arkhanval-character-sheet .arkhanval-player-notes__field .editor-content,
+.arkhanval-character-sheet .arkhanval-player-notes__field .ProseMirror {
+  font-family: var(--arkhanval-font-body, Georgia, serif);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }

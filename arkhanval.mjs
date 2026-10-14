@@ -62,6 +62,18 @@ Hooks.once("ready", () => {
   initializeRoundTracking();
 });
 
+// Double garde (contrôle UI/handler + hook client) : une mise à jour
+// du mode provenant d'un compte non MJ est refusée, même propriétaire.
+// Cette protection client ne prétend pas remplacer l'autorité du serveur.
+Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
+  if (actor?.type !== "character") return;
+  const mode = foundry.utils.getProperty(changes, "flags.arkhanval.viewMode")
+    ?? changes?.["flags.arkhanval.viewMode"];
+  if (mode === undefined) return;
+  const user = game.users?.get?.(userId);
+  if (!user?.isGM || !["pj", "npc"].includes(mode)) return false;
+});
+
 Hooks.on("preCreateActor", (actor, data, options, userId) => {
   if (userId !== game.user.id) return;
   initializeCreationState(actor);

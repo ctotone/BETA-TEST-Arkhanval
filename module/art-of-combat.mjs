@@ -383,7 +383,7 @@ function artCombatRollDisclosure(participant) {
 }
 
 function actorHasArkCircle(actor) {
-  if (!actor) return false;
+  if (!actor || actor.getFlag?.("arkhanval", "viewMode") === "npc") return false;
   return ["arksonge", "arkentropie", "arkoeur"]
     .some((arkId) => (Number(actor.system.arks?.[arkId]?.circles) || 0) > 0);
 }
@@ -514,6 +514,7 @@ function artCombatParticipantBlock(confrontation, participant) {
   const experienceAction = hasQr
     && participant.locked
     && Boolean(participant.result?.experienceEligible)
+    && actor?.getFlag?.("arkhanval", "viewMode") !== "npc"
     && !participant.experienceUsed
     ? `
       <button type="button"
@@ -695,6 +696,8 @@ async function applyArtCombatAction(payload) {
       if (!participant || !userCanActForActor(payload.userId, actor)) return;
 
       if (payload.action === "experience-roll") {
+        // Vérification sur le client MJ autoritaire, pas uniquement dans l'UI.
+        if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return;
         if (!participant.locked || !participant.result?.experienceEligible || participant.experienceUsed) return;
         const source = artCombatExperienceSource(actor, participant);
         if (!source) throw new Error(`Source d’expérience introuvable pour ${actor?.name ?? "ce personnage"}.`);
@@ -727,6 +730,7 @@ async function applyArtCombatAction(payload) {
         participant.arkChoice = "no";
         participant.locked = true;
         } else if (payload.action === "ark-yes") {
+          if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return;
           if (!qrIsSet(participant.qr) || participant.locked) return;
           const result = foundry.utils.deepClone(payload.result ?? null);
           if (!result || !Number.isFinite(Number(result.qr))) return;
@@ -866,7 +870,7 @@ async function rollArtCombatExperience(confrontationId, actorId) {
   if (!participant.result?.experienceEligible || participant.experienceUsed) return;
 
   const actor = game.actors?.get?.(actorId);
-  if (!actor) return;
+  if (!actor || actor.getFlag?.("arkhanval", "viewMode") === "npc") return;
   if (!game.user?.isGM && !actor.testUserPermission?.(game.user, "OWNER")) {
     ui.notifications?.warn?.("Arkhanval | Vous ne contrôlez pas ce personnage.");
     return;
@@ -1308,7 +1312,7 @@ export function activateArtCombatChatMessage(message, html) {
     const actorId = String(button.dataset.actorId ?? "");
     const actor = game.actors?.get?.(actorId) ?? null;
     const canUse = Boolean(game.user?.isGM || actor?.testUserPermission?.(game.user, "OWNER"));
-    if (!canUse) {
+    if (!canUse || actor?.getFlag?.("arkhanval", "viewMode") === "npc") {
       button.hidden = true;
       button.disabled = true;
       continue;

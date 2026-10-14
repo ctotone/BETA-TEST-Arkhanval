@@ -236,6 +236,8 @@ export async function addArkCircles(actor, arkId, amount = 1) {
 }
 
 export async function spendArkCircle(actor, arkId) {
+  // Les données restent conservées en PJ ↔ PNJ ; une vue PNJ ne dépense jamais de cercle.
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return false;
   const current = Number(actor.system.arks?.[arkId]?.circles) || 0;
   if (current <= 0) return false;
   await actor.update(
@@ -1043,6 +1045,7 @@ export async function resolveExperienceDie(actor, source, sourceMessageId = null
 
 
 export async function promptArkRerollSelection(actor, result) {
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return null;
   let attemptIndex = result?.selectedAttemptIndex;
   if ((!Number.isInteger(attemptIndex) || attemptIndex < 0) && result?.attempts?.length === 1) {
     attemptIndex = 0;
@@ -1262,6 +1265,9 @@ function progressionActorFor(message, requester) {
 
 registerChatProgressionAction("experience-roll", ({ message, requester }) => oncePerMessage(message, "experience-roll", async () => {
   const actor = progressionActorFor(message, requester);
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") {
+    throw new Error("Aucun dé d’expérience proposé en mode PNJ.");
+  }
   const state = message.getFlag?.("arkhanval", "experience");
   if (!state) throw new Error("Aucun dé d’expérience sur cette carte.");
   if (state.used) return { alreadyUsed: true };
@@ -1574,6 +1580,9 @@ export function activateExperienceChatMessage(message, html) {
               await message.update({
                 content: buildResolutionChatContent(latest.result, {
                   ...(latest.chatOptions ?? {}),
+                  // Ne pas réintroduire l'XP d'un PNJ lors du refus de relance.
+                  experienceSource: actor?.getFlag?.("arkhanval", "viewMode") === "npc"
+                    ? null : latest.chatOptions?.experienceSource ?? null,
                   arkRerollAvailable: false,
                   arkRerollDiceCount: 0,
                   incantation: currentIncantation,
@@ -1630,6 +1639,7 @@ export function activateExperienceChatMessage(message, html) {
 
             const rawExperienceSource = latest.chatOptions?.experienceSource ?? null;
             const experienceSource = retainedResult.experienceEligible
+              && actor?.getFlag?.("arkhanval", "viewMode") !== "npc"
               ? rawExperienceSource
               : null;
             const previousCombat = message.getFlag?.("arkhanval", "combat") ?? null;
@@ -1644,7 +1654,7 @@ export function activateExperienceChatMessage(message, html) {
                     progressGain: latest.chatOptions?.progressGain ?? null,
                     arkBoost: latest.chatOptions?.arkBoost ?? "",
                     arkReroll: nextResult.arkReroll ?? { arkId: reroll.arkId },
-                    experienceSource: rawExperienceSource,
+                    experienceSource,
                     arkRerollAvailable: false,
                     chatActor: latest.chatOptions?.chatActor ?? null
                   }
@@ -1807,6 +1817,8 @@ export function activateExperienceChatMessage(message, html) {
               sourceResult,
               {
                 ...(reroll?.chatOptions ?? {}),
+                experienceSource: currentActor?.getFlag?.("arkhanval", "viewMode") === "npc"
+                  ? null : reroll?.chatOptions?.experienceSource ?? null,
                 concentration: nextConcentration,
                 arkRerollAvailable: false,
                 arkRerollOffered: false

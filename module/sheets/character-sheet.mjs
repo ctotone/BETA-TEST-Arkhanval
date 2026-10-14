@@ -287,7 +287,7 @@ function prepareArchetypes(actor) {
     !resolveCanonicalSkill(item) &&
     String(item.name ?? "").trim().length > 0;
 
-  // Phase 05B C06: archetype cards show only real skills.
+  // Archetype cards show only real skills.
   // Each visual pair shares the height required by the fuller card; the shorter
   // card simply keeps unused paper space and receives no synthetic skill rows.
   const pairedArchetypeIds = Object.freeze([
@@ -413,11 +413,16 @@ function prepareArkTracks(actor) {
 
 function prepareWoundTracks(actor) {
   const wounds = actor.items.filter((item) => item.type === "wound");
+  // Même table officielle que le DataModel Actor et la synchronisation à chaud.
+  // Lire le rang actuel évite une capacité dérivée périmée après édition locale
+  // (submitOnChange avec render:false) ou lors d'une bascule PJ ↔ PNJ.
+  const rank = Number(actor.system.arks?.arkoeur?.rank);
+  const capacities = WOUND_CAPACITY_BY_ARKOEUR[rank] ?? {};
 
   return WOUND_TRACKS.map((track) => {
     const entries = wounds.filter((item) => item.system.severity === track.id);
     const count = entries.length;
-    const capacity = actor.system.woundCapacity?.[track.id] ?? null;
+    const capacity = capacities[track.id] ?? null;
 
     const availableMarks = Math.max(capacity ?? 0, count);
 
@@ -606,6 +611,9 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     },
     window: {
       resizable: true
+    },
+    actions: {
+      toggleCharacterView: this.#toggleCharacterView
     }
   };
 
@@ -615,6 +623,30 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     }
   };
 
+  // L'Actor et ses Items restent uniques. Seule la vue change.
+  get isNpcView() {
+    return this.actor?.getFlag?.("arkhanval", "viewMode") === "npc";
+  }
+
+  _getHeaderControls() {
+    const controls = super._getHeaderControls();
+    // Le contrôle n'est même pas instancié pour un compte non MJ.
+    if (!game.user?.isGM) return controls;
+    return [...controls, {
+      action: "toggleCharacterView",
+      label: this.isNpcView ? "Basculer en fiche PJ" : "Basculer en fiche PNJ",
+      icon: "fa-solid fa-right-left"
+    }];
+  }
+
+  static async #toggleCharacterView() {
+    if (!game.user?.isGM || this.actor?.type !== "character") return;
+    const previous = this.isNpcView ? "npc" : "pj";
+    await this.actor.setFlag("arkhanval", "viewMode", previous === "npc" ? "pj" : "npc");
+    // Ne jamais modifier/convertir les données de personnage.
+    await this.render({ force: true });
+  }
+
   static TABS = {
     sheet: {
       initial: "character",
@@ -622,6 +654,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
         { id: "character", label: "Personnage", icon: "fa-solid fa-user" },
         { id: "equipment", label: "Équipement", icon: "fa-solid fa-briefcase" },
         { id: "spells", label: "Sortilège", icon: "fa-solid fa-book-open" },
+        { id: "notes", label: "Notes", icon: "fa-solid fa-feather-pointed" },
         { id: "progression", label: "Progression", icon: "fa-solid fa-arrow-trend-up" }
       ]
     }
@@ -632,9 +665,18 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   _pendingScrollPosition = null;
   _collapsedSpellIds = new Set();
   _advancedUnlocked = false;
+
+  // La vue PNJ reste déverrouillée à chaque ouverture,
+  // sans modifier le verrou temporaire de la présentation PJ.
+  // Les permissions habituelles de l'Actor restent impératives.
+  get _advancedEditingEnabled() {
+    return this.isEditable && (this.isNpcView || this._advancedUnlocked);
+  }
+
   _progressionSession = null;
   _progressionRevision = null;
   _progressionSyncHooks = null;
+  _displayedArkoeurRank = null;
 
   /** Keep Page 4 current when Ark circles or XP arrive through Chat, another
    * sheet or an embedded Item while this sheet remains open. No polling and no
@@ -643,10 +685,19 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   _installProgressionSync() {
     if (this._progressionSyncHooks) return;
     const updateActor = (actor) => {
-      if (actor?.uuid === this.actor?.uuid) this._refreshProgressionIfChanged();
+      if (actor?.uuid !== this.actor?.uuid) return;
+      this._refreshProgressionIfChanged();
+      // Le modèle peut évoluer via une autre fiche ou une mise à jour Actor
+      // render-silent. Garder les marques visibles PJ ET PNJ synchronisées.
+      const rank = Number(actor.system.arks?.arkoeur?.rank);
+      if (this.rendered && rank !== this._displayedArkoeurRank) {
+        this._syncWoundTrackAvailability(rank);
+      }
     };
     const updateItem = (item) => {
-      if (item?.parent?.uuid === this.actor?.uuid) this._refreshProgressionIfChanged();
+      if (item?.parent?.uuid !== this.actor?.uuid) return;
+      this._refreshProgressionIfChanged();
+      this._scheduleNpcItemRefresh();
     };
     this._progressionSyncHooks = [
       ["updateActor", Hooks.on("updateActor", updateActor)],
@@ -656,10 +707,22 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     ];
   }
 
+  // Les Items modifiés depuis leurs propres fenêtres ou un drag-and-drop
+  // doivent apparaître sur la vue PNJ sans fermer/réouvrir la fiche.
+  _scheduleNpcItemRefresh() {
+    if (!this.rendered || !this.isNpcView || this._npcItemRefreshPending) return;
+    this._npcItemRefreshPending = true;
+    queueMicrotask(() => {
+      this._npcItemRefreshPending = false;
+      if (this.rendered && this.isNpcView) void this.render({ force: false });
+    });
+  }
+
   _removeProgressionSync() {
     for (const [event, id] of this._progressionSyncHooks ?? []) Hooks.off(event, id);
     this._progressionSyncHooks = null;
     this._progressionRevision = null;
+    this._displayedArkoeurRank = null;
   }
 
   _refreshProgressionIfChanged() {
@@ -697,7 +760,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     const root = this.element;
     if (!root) return;
     const permitted = this.isEditable;
-    const unlocked = permitted && this._advancedUnlocked;
+    const unlocked = this._advancedEditingEnabled;
     const locks = root.querySelectorAll("[data-advanced-lock]");
     for (const lock of locks) {
       lock.disabled = !permitted;
@@ -709,7 +772,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     }
     const targets = root.querySelectorAll([
       "[data-skill-field]", "[data-ark-circle]", "[data-ark-rank]",
-      "[data-primary-archetype-slot]", ".arkhanval-archetype-xp input",
+      "[data-primary-archetype-slot]", "[data-npc-primary-slot]", ".arkhanval-archetype-xp input",
       '[data-item-field="learningXp"]', '[data-item-field="learningTarget"]',
       '[data-advanced-work-edit]', '[data-advanced-incantation-edit]'
     ].join(","));
@@ -779,13 +842,13 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   async _onAdvancedDelete(event) {
     event.preventDefault();
     event.stopPropagation();
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const id = event.currentTarget.dataset.advancedDelete;
     const item = this.actor.items.get(id);
     if (!item || !["weapon", "armor", "trait", "work", "equipment", "book"].includes(item.type)) return;
     if (!await confirmActorItemDeletion(item)) return;
     // L'Item doit toujours appartenir à cet Actor au moment de la confirmation.
-    if (!this.actor.items.get(id) || !this._advancedUnlocked) return;
+    if (!this.actor.items.get(id) || !this._advancedEditingEnabled) return;
     await this.actor.deleteEmbeddedDocuments("Item", [id]);
     await this.render({ force: false });
   }
@@ -936,6 +999,13 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     });
     this._applyAdvancedProtection();
 
+    for (const input of root.querySelectorAll("[data-npc-notes]")) {
+      input.addEventListener("change", async () => {
+        if (!this.isEditable || !this.isNpcView) return;
+        await this.actor.setFlag("arkhanval", "npcNotes", input.value);
+      });
+    }
+
     for (const input of root.querySelectorAll("[data-actor-name]")) {
       input.addEventListener("change", (event) => this._onActorNameChange(event));
     }
@@ -948,6 +1018,9 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     // just the progression body while preserving the active page and scroll.
     this._progressionRevision = progressionRevision(this.actor);
     this._installProgressionSync();
+    // Réappliquer la capacité dès l'affichage dans les deux présentations.
+    // Le statut caché des marques est piloté par les mêmes règles d'Arkœur.
+    this._syncWoundTrackAvailability(Number(this.actor.system.arks?.arkoeur?.rank));
     const progressionRoot = root.querySelector("[data-progression-content]");
     if (progressionRoot && this._progressionSession) {
       if (this.isEditable) {
@@ -1037,7 +1110,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
 
     if (!this.isEditable) return;
 
-    for (const select of root.querySelectorAll("[data-primary-archetype-slot]")) {
+    for (const select of root.querySelectorAll("[data-primary-archetype-slot], [data-npc-primary-slot]")) {
       select.addEventListener("change", (event) => this._onPrimaryArchetypeChange(event));
     }
 
@@ -1082,6 +1155,20 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
 
   async _onDropItem(event, item) {
     if (item.type === "skill") {
+      if (this.isNpcView && item.parent !== this.actor) {
+        const incoming = resolveCanonicalSkill(item);
+        const identifier = incoming?.identifier
+          ?? String(item.system.identifier ?? buildSkillIdentifier(item.system.archetype, item.name));
+        const duplicate = listActorSkills(this.actor).find((skill) =>
+          skill.itemId && (identifier && skill.identifier === identifier
+            || (skill.archetype === item.system.archetype
+              && normalizeLookupName(skill.name) === normalizeLookupName(item.name)))
+        );
+        if (duplicate) {
+          ui.notifications?.info?.(`Arkhanval | « ${duplicate.name} » est déjà présente sur la fiche.`);
+          return null;
+        }
+      }
       const archetype = item.system.archetype;
       const valid = ARKHANVAL_ARCHETYPES.some((entry) => entry.id === archetype);
       if (!valid) {
@@ -1534,7 +1621,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   async _onAdvancedWorkProgressChange(event) {
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const id = String(event.currentTarget.dataset.itemId ?? "");
     const item = this.actor.items.get(id);
     if (item?.type !== "work") return;
@@ -1555,7 +1642,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   async _onAdvancedIncantationChange(event) {
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const spellId = String(event.currentTarget.dataset.itemId ?? "");
     const block = event.currentTarget.closest(".arkhanval-incantation-block");
     const total = Number(block?.querySelector('[data-advanced-incantation-edit="total"]')?.value);
@@ -1698,6 +1785,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   _syncWoundTrackAvailability(rank) {
+    this._displayedArkoeurRank = rank;
     const capacity = WOUND_CAPACITY_BY_ARKOEUR[rank] ?? {};
 
     for (const track of WOUND_TRACKS) {
@@ -1710,7 +1798,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
         `[data-wound-severity="${track.id}"][data-wound-mark]`
       ) ?? []) {
         const index = Number(input.dataset.woundMark);
-        const label = input.closest(".arkhanval-wound-mark");
+        const label = input.closest(".arkhanval-wound-mark, .arkhanval-npc-wound-marks label");
         if (!label) continue;
         label.hidden = index > available;
         label.title = `${current} / ${Number(capacity[track.id]) || 0}`;
@@ -1719,7 +1807,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   _onArkRankChange(event) {
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const input = event.currentTarget;
     if (input.dataset.arkRank !== "arkoeur") return;
 
@@ -1728,9 +1816,9 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   async _onPrimaryArchetypeChange(event) {
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const select = event.currentTarget;
-    const slot = Number(select.dataset.primaryArchetypeSlot);
+    const slot = Number(select.dataset.primaryArchetypeSlot ?? select.dataset.npcPrimarySlot);
     if (!Number.isInteger(slot) || slot < 0 || slot > 1) return;
 
     const current = Array.from(this.actor.system.archetypes?.primary ?? []).slice(0, 2);
@@ -1751,6 +1839,8 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
       { "system.archetypes.primary": normalized },
       { render: false }
     );
+    // La liste des quatre colonnes PNJ dépend directement de ce choix.
+    if (this.isNpcView) await this.render({ force: false });
   }
 
   async _onPeopleChange(event) {
@@ -1819,7 +1909,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   async _onSkillFieldChange(event) {
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const input = event.currentTarget;
     const row = input.closest(".arkhanval-skill-row");
     const field = input.dataset.skillField;
@@ -1863,7 +1953,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
   }
 
   async _onArkCircleChange(event) {
-    if (!this.isEditable || !this._advancedUnlocked) return;
+    if (!this._advancedEditingEnabled) return;
     const input = event.currentTarget;
     const ark = input.dataset.ark;
     const index = Number(input.dataset.arkCircle);
@@ -1941,7 +2031,7 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
 
   async _onEmbeddedItemFieldChange(event) {
     if (["learningXp", "learningTarget"].includes(event.currentTarget.dataset.itemField)
-      && (!this.isEditable || !this._advancedUnlocked)) return;
+      && !this._advancedEditingEnabled) return;
     const input = event.currentTarget;
     const itemId = input.dataset.itemId;
     const field = input.dataset.itemField;
@@ -2195,7 +2285,12 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
     context.systemFields = this.actor.system.schema.fields;
     context.enriched = {
       appearance: await enrichArkhanvalHTML(this.actor.system.identity?.appearance, this.actor),
-      arksNotes: await enrichArkhanvalHTML(this.actor.system.notes?.arks, this.actor)
+      arksNotes: await enrichArkhanvalHTML(this.actor.system.notes?.arks, this.actor),
+      playerNotes: await enrichArkhanvalHTML(this.actor.system.notes?.player, this.actor)
+    };
+    context.pageNotes = {
+      name: actorField("notes.player"),
+      value: this.actor.system.notes?.player ?? ""
     };
     context.sheetWidth = SHEET_WIDTH;
 
@@ -2298,6 +2393,30 @@ export class ArkhanvalCharacterSheet extends HandlebarsApplicationMixin(ActorShe
       hasCompletedLibrary: completedLibrary.length > 0,
       hasActiveAndCompletedLibrary: activeLibrary.length > 0 && completedLibrary.length > 0
     };
+
+    context.isNpcView = this.isNpcView;
+    if (context.isNpcView) {
+      const primaryIds = new Set(primary.filter(Boolean));
+      const archetypesById = new Map(context.archetypes.map((entry) => [entry.id, entry]));
+      const allSkills = listActorSkills(this.actor);
+      const others = allSkills.filter((skill) =>
+        !primaryIds.has(skill.archetype) && Number(skill.rank) >= 1
+      ).map((skill) => ({
+        ...skill,
+        itemName: skill.name
+      }));
+      context.npc = {
+        primary: context.identity.primaryArchetypeSlots.map((slot) => ({
+          ...slot,
+          skills: (archetypesById.get(slot.value)?.skills ?? []).map((skill) => ({ ...skill, archetype: slot.value }))
+        })),
+        otherFirst: others.slice(0, 7),
+        otherSecond: others.slice(7),
+        specialties: specialtyItems.map(prepareItemSummary)
+          .sort((a,b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" })),
+        notes: String(this.actor.getFlag?.("arkhanval", "npcNotes") ?? "")
+      };
+    }
 
     context.spells = spells;
     this._progressionSession ??= createProgressionSession(this.actor);

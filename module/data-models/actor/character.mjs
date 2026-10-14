@@ -100,7 +100,9 @@ export class ArkhanvalCharacterData extends foundry.abstract.TypeDataModel {
 
       notes: new fields.SchemaField({
         arks: htmlField(),
-        creation: textField()
+        creation: textField(),
+        // Carnet riche libre du joueur, indépendant des notes PNJ.
+        player: htmlField()
       })
     };
   }

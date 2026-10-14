@@ -315,6 +315,9 @@ async function promptSpellOppositionSkill(actor, spellName = "Sortilège") {
 }
 
 function combatArkDecisionForSpellResponse(actor, result) {
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") {
+    return { available: false, diceCount: 0, choice: "no", locked: true };
+  }
   const attemptIndex = Number(result?.selectedAttemptIndex);
   const attempt = Number.isInteger(attemptIndex) && attemptIndex >= 0
     ? result?.attempts?.[attemptIndex] ?? null

@@ -1095,6 +1095,8 @@ function arkRerollDiceCount(result) {
 }
 
 function hasAvailableArkCircle(actor) {
+  // Les cercles sont propres à la vue PJ, y compris lors d'une reconstruction.
+  if (actor?.getFlag?.("arkhanval", "viewMode") === "npc") return false;
   return ARKHANVAL_ARKS.some(
     (ark) => (Number(actor?.system?.arks?.[ark.id]?.circles) || 0) > 0
   );
@@ -1110,10 +1112,14 @@ export async function postResolutionChatMessage(actor, result, options = {}) {
   if (!ChatMessageClass) throw new Error("API ChatMessage de Foundry indisponible.");
 
   const rawExperienceSource = options.experienceSource ?? null;
+  // Le mode enregistré sur l'Actor (y compris synthétique d'un token non lié)
+  // gouverne la proposition. Les champs XP existants restent conservés.
   const experienceSource = result.experienceEligible
+    && actor?.getFlag?.("arkhanval", "viewMode") !== "npc"
     ? rawExperienceSource
     : null;
   const availableArkRerollDiceCount = options.allowArkReroll !== false
+    && actor?.getFlag?.("arkhanval", "viewMode") !== "npc"
     ? arkRerollDiceCount(result)
     : 0;
   const arkRerollOffered = availableArkRerollDiceCount > 0;
@@ -1244,7 +1250,9 @@ export async function postResolutionChatMessage(actor, result, options = {}) {
       chatOptions: {
         progressGain: chatOptions.progressGain,
         arkBoost: chatOptions.arkBoost,
-        experienceSource: rawExperienceSource,
+        // Conserver la proposition filtrée, sinon une reconstruction ultérieure
+        // de la carte de combat réintroduit l'XP d'un PNJ.
+        experienceSource,
         arkRerollAvailable,
         arkRerollDiceCount: availableArkRerollDiceCount,
         chatActor: chatOptions.chatActor ?? {
@@ -1263,7 +1271,8 @@ export async function postResolutionChatMessage(actor, result, options = {}) {
       chatOptions: {
         progressGain: chatOptions.progressGain,
         arkBoost: chatOptions.arkBoost,
-        experienceSource: rawExperienceSource,
+        // Même invariant pour les relances : aucun XP caché à réafficher.
+        experienceSource,
         combatContext: chatOptions.combatContext,
         combatAutoResponse: chatOptions.combatAutoResponse,
         incantation: chatOptions.incantation,

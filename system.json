@@ -1,8 +1,8 @@
 {
   "id": "arkhanval",
   "title": "Arkhanval",
-  "description": "Système de jeu de rôle Arkhanval pour Foundry Virtual Tabletop v14 — version bêta 0.9.0.",
-  "version": "0.9.0",
+  "description": "Système de jeu de rôle Arkhanval pour Foundry Virtual Tabletop v14 — version bêta 0.9.1.",
+  "version": "0.9.1",
   "compatibility": {
     "minimum": 14,
     "verified": 14
@@ -13,7 +13,8 @@
   "styles": [
     "styles/arkhanval.css",
     "styles/item-sheets.css",
-    "styles/richtext/arkhanval-richtext.css"
+    "styles/richtext/arkhanval-richtext.css",
+    "styles/npc-sheet.css"
   ],
   "languages": [
     {
@@ -116,5 +117,5 @@
   ],
   "url": "https://github.com/ctotone/BETA-TEST-Arkhanval",
   "manifest": "https://raw.githubusercontent.com/ctotone/BETA-TEST-Arkhanval/main/system.json",
-  "download": "https://github.com/ctotone/BETA-TEST-Arkhanval/releases/download/0.9.0/arkhanval.zip"
+  "download": "https://github.com/ctotone/BETA-TEST-Arkhanval/releases/download/0.9.1/arkhanval.zip"
 }

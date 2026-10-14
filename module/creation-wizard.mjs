@@ -1165,8 +1165,30 @@ export class ArkhanvalCharacterCreation extends HandlebarsApplicationMixin(Appli
     this.render({ force: true });
   }
 
-  static #onNpcCreation() {
-    ui.notifications?.info("Le moteur de création de PNJ sera ajouté dans une phase ultérieure.");
+  static async #onNpcCreation() {
+    if (!this.actor?.isOwner || !game.user?.isGM) return;
+    const choice = await DialogV2.wait({
+      window: { title: "Création de PNJ — Prototype Token" },
+      classes: ["arkhanval", "arkhanval-popup-dialog", "arkhanval-popup-dialog--choice"],
+      content: `<div class="arkhanval-phase04-dialog"><p>Comment les futurs tokens de ce PNJ seront-ils liés à sa fiche ?</p>
+        <p><strong>Lié :</strong> personnage unique, état commun à tous ses tokens.</p>
+        <p><strong>Non lié :</strong> exemplaires indépendants (créatures, gardes, meute).</p></div>`,
+      modal: true,
+      rejectClose: false,
+      buttons: [
+        { action: "linked", label: "Token lié", icon: "fa-solid fa-link", default: true },
+        { action: "unlinked", label: "Token non lié", icon: "fa-solid fa-link-slash" },
+        { action: "cancel", label: "Annuler", icon: "fa-solid fa-xmark" }
+      ]
+    });
+    if (choice !== "linked" && choice !== "unlinked") return;
+    await this.actor.update({
+      "prototypeToken.actorLink": choice === "linked",
+      "flags.arkhanval.viewMode": "npc"
+    }, { render: false });
+    await abandonCreation(this.actor);
+    await this.close();
+    await this.actor.sheet?.render({ force: true });
   }
 
   static async #onChooseProfile(event, target) {
@@ -1754,6 +1776,7 @@ export class ArkhanvalCharacterCreation extends HandlebarsApplicationMixin(Appli
 
     context.actor = this.actor;
     context.editable = Boolean(this.actor?.isOwner);
+    context.canCreateNpc = Boolean(this.actor?.isOwner && game.user?.isGM);
     context.state = state;
     context.isEntry = state.status === "entry";
     context.isGuided = state.status === "guided";

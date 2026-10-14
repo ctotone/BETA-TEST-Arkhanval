@@ -1,3 +1,4 @@
+{{#unless isNpcView}}
 <div class="arkhanval-sheet-shell">
   <nav class="arkhanval-sheet-tabs tabs" data-group="sheet" aria-label="{{localize "ARKHANVAL.Sheet.Navigation"}}">
     <button type="button" class="arkhanval-sheet-tab {{tabs.character.cssClass}}" data-action="tab" data-group="sheet" data-tab="character">
@@ -11,6 +12,10 @@
     <button type="button" class="arkhanval-sheet-tab {{tabs.spells.cssClass}}" data-action="tab" data-group="sheet" data-tab="spells">
       <i class="{{tabs.spells.icon}}" aria-hidden="true"></i>
       <span>{{tabs.spells.label}}</span>
+    </button>
+    <button type="button" class="arkhanval-sheet-tab {{tabs.notes.cssClass}}" data-action="tab" data-group="sheet" data-tab="notes">
+      <i class="{{tabs.notes.icon}}" aria-hidden="true"></i>
+      <span>{{tabs.notes.label}}</span>
     </button>
     <button type="button" class="arkhanval-sheet-tab {{tabs.progression.cssClass}}" data-action="tab" data-group="sheet" data-tab="progression">
       <i class="{{tabs.progression.icon}}" aria-hidden="true"></i>
@@ -1013,6 +1018,27 @@
       </div>
     </section>
 
+    <section class="tab {{tabs.notes.cssClass}}" data-group="sheet" data-tab="notes">
+      <div class="arkhanval-sheet-page arkhanval-sheet-page--player-notes" aria-label="Carnet de notes">
+        <div class="arkhanval-flex-header" aria-hidden="true">
+          <img class="arkhanval-sheet-logo arkhanval-sheet-logo--flow"
+               src="systems/arkhanval/assets/sheets/common/logo_arkhanval.webp"
+               alt="">
+        </div>
+        <div class="arkhanval-player-notes">
+          <div class="arkhanval-player-notes__field arkhanval-richtext">
+            {{formInput systemFields.notes.fields.player
+              value=pageNotes.value
+              enriched=enriched.playerNotes
+              name=pageNotes.name
+              toggled=editable
+              disabled=readOnly
+            }}
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="tab {{tabs.progression.cssClass}}" data-group="sheet" data-tab="progression">
       <div class="arkhanval-sheet-page arkhanval-sheet-page-4 arkhanval-progression-page" aria-label="Progression">
         <img class="arkhanval-sheet-logo arkhanval-sheet-logo--progression"
@@ -1026,3 +1052,130 @@
     </section>
   </div>
 </div>
+
+{{else}}
+<div class="arkhanval-sheet-shell arkhanval-sheet-shell--npc">
+  <div class="arkhanval-sheet-scroll arkhanval-npc-scroll">
+    <div class="arkhanval-sheet-page arkhanval-npc-page" aria-label="Fiche PNJ Arkhanval">
+      <header class="arkhanval-npc-name" aria-label="Nom du PNJ">
+        <input type="text" data-actor-name value="{{actor.name}}" aria-label="Nom du personnage" {{#unless editable}}disabled{{/unless}}>
+      </header>
+      <div class="arkhanval-npc-upper">
+        <div class="arkhanval-npc-identity-left">
+          <div class="arkhanval-npc-fields">
+            <label class="arkhanval-npc-field"><span>Peuple</span><input type="text" data-people-field value="{{identity.people}}" {{#unless editable}}disabled{{/unless}}></label>
+            <label class="arkhanval-npc-field"><span>Origine</span><input type="text" name="{{identity.origin.name}}" value="{{identity.origin.value}}" {{#unless editable}}disabled{{/unless}}></label>
+          </div>
+          <section class="arkhanval-npc-section arkhanval-npc-gear">
+            <h3>Équipement, biens et richesses</h3>
+            <div class="arkhanval-npc-section-body arkhanval-npc-list">
+              {{#each page2.possessions as |item|}}
+                <div class="arkhanval-npc-item-row"><button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button><span class="arkhanval-npc-item-meta">× {{item.quantity}}</span></div>
+              {{/each}}
+              {{#each page2.library as |item|}}
+                <div class="arkhanval-npc-item-row"><button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button><span class="arkhanval-npc-item-meta">Livre</span></div>
+              {{/each}}
+              {{#unless page2.possessions.length}}{{#unless page2.library.length}}<p class="arkhanval-npc-empty">Aucun équipement ou livre</p>{{/unless}}{{/unless}}
+            </div>
+            {{#if editable}}<div class="arkhanval-npc-adds">
+              <button type="button" class="arkhanval-item-add" data-item-create data-item-type="equipment" data-item-name="Possession" title="Ajouter une possession"><i class="fa-solid fa-plus"></i> Équipement</button>
+              <button type="button" class="arkhanval-item-add" data-item-create data-item-type="book" data-item-name="Livre" title="Ajouter un livre"><i class="fa-solid fa-plus"></i> Livre</button>
+            </div>{{/if}}
+          </section>
+          <div class="arkhanval-npc-arks">
+            {{#each arkTracks as |track|}}
+              <label class="arkhanval-npc-ark"><input type="number" data-ark-rank="{{track.id}}" name="{{track.rankName}}" value="{{track.rankValue}}" aria-label="Rang de {{track.label}}" {{#unless ../editable}}disabled{{/unless}}><img src="systems/arkhanval/assets/sheets/page1/titre_{{track.id}}.webp" alt="{{track.label}}" loading="lazy"></label>
+            {{/each}}
+          </div>
+        </div>
+        <div class="arkhanval-npc-combat">
+          <section class="arkhanval-npc-section arkhanval-npc-armor">
+            <h3>Armures</h3>
+            <div class="arkhanval-npc-section-body arkhanval-npc-list">
+              {{#each page2.armors as |item|}}
+                <div class="arkhanval-npc-item-row"><button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button><span class="arkhanval-npc-item-meta">{{item.protectionCurrent}}</span>
+                <label class="arkhanval-npc-armor-equipped" title="Armure portée"><input class="arkhanval-item-tags__native-check" type="checkbox" data-item-id="{{item.id}}" data-item-field="equipped" data-item-value-type="boolean" {{#if item.equipped}}checked{{/if}} {{#unless ../editable}}disabled{{/unless}}><span class="arkhanval-item-tags__check" aria-hidden="true"></span></label></div>
+              {{/each}}
+            </div>
+            {{#if editable}}<button type="button" class="arkhanval-npc-add arkhanval-item-add" data-item-create data-item-type="armor" data-item-name="Armure" title="Ajouter une armure"><i class="fa-solid fa-plus"></i></button>{{/if}}
+          </section>
+          <section class="arkhanval-npc-section arkhanval-npc-weapons">
+            <h3>Armes</h3>
+            <div class="arkhanval-npc-section-body arkhanval-npc-list">
+              {{#each page2.weaponGroups as |group|}}
+                {{#each group.items as |item|}}
+                  <div class="arkhanval-npc-item-row"><button type="button" class="arkhanval-item-link" data-item-open data-item-id="{{item.id}}">{{item.name}}</button><span class="arkhanval-npc-item-meta">{{item.damage}}</span></div>
+                {{/each}}
+              {{/each}}
+            </div>
+            {{#if editable}}<button type="button" class="arkhanval-npc-add arkhanval-item-add" data-item-create data-item-type="weapon" data-item-name="Arme" title="Ajouter une arme"><i class="fa-solid fa-plus"></i></button>{{/if}}
+          </section>
+        </div>
+        <aside class="arkhanval-npc-wounds arkhanval-npc-section">
+          <h3>Blessures</h3>
+          {{#each woundTracks as |track|}}
+            <div class="arkhanval-npc-wound-group">
+              <b>{{localize track.labelKey}}</b><small>{{localize track.rangeKey}}</small>
+              <div class="arkhanval-npc-wound-marks">
+                {{#each track.marks as |mark|}}
+                  <label {{#unless mark.available}}hidden{{/unless}} title="{{../countCurrent}} / {{../capacity}}">
+                    <input type="checkbox" data-wound-severity="{{../id}}" data-wound-mark="{{mark.index}}" {{#if mark.itemId}}data-wound-item-id="{{mark.itemId}}"{{/if}} {{#if mark.checked}}checked{{/if}} {{#unless ../../editable}}disabled{{/unless}}>
+                    <span></span>
+                  </label>
+                {{/each}}
+              </div>
+            </div>
+          {{/each}}
+          <div class="arkhanval-npc-wound-stat"><span>Malus FD</span><output class="arkhanval-wound-field--fd-penalty">{{wounds.fdPenalty}}</output></div>
+          <div class="arkhanval-npc-wound-stat"><span>Armure totale</span><output data-active-protection>{{wounds.armorDisplay}}</output></div>
+          {{#if canManageStates}}<button type="button" class="arkhanval-npc-state-manager arkhanval-state-item" data-state-manager-open title="Gérer les états appliqués">États</button>{{/if}}
+        </aside>
+      </div>
+      <div class="arkhanval-npc-skills-grid">
+        {{#each npc.primary as |slot|}}
+          <section class="arkhanval-npc-section arkhanval-npc-skill-card">
+            <header><select data-npc-primary-slot="{{slot.index}}" aria-label="Archétype principal {{slot.index}}" {{#unless ../editable}}disabled{{/unless}}>
+              <option value="">Archétype principal {{slot.index}}</option>
+              {{#each slot.options as |option|}}<option value="{{option.id}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}
+            </select></header>
+            <div class="arkhanval-npc-skill-lines">
+              {{#each slot.skills as |skill|}}
+                <div class="arkhanval-npc-skill-row">
+                  <button type="button" class="arkhanval-skill-action" data-skill-action data-skill-archetype="{{slot.value}}" data-skill-identifier="{{skill.identifier}}" {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}} title="Clic : jet ; Maj+clic : fiche">{{skill.itemName}}</button>
+                  <input class="arkhanval-npc-skill-rank" type="number" data-skill-field="rank" data-skill-archetype="{{slot.value}}" data-skill-identifier="{{skill.identifier}}" data-skill-name="{{skill.itemName}}" data-skill-custom="{{skill.isCustom}}" {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}} value="{{skill.rank}}" aria-label="Rang" {{#unless ../../editable}}disabled{{/unless}}>
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/each}}
+        <section class="arkhanval-npc-section arkhanval-npc-skill-card">
+          <h3>Autres compétences</h3>
+          <div class="arkhanval-npc-skill-lines">
+            {{#each npc.otherFirst as |skill|}}
+              <div class="arkhanval-npc-skill-row"><button type="button" class="arkhanval-skill-action" data-skill-action data-skill-archetype="{{skill.archetype}}" data-skill-identifier="{{skill.identifier}}" {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}} title="Clic : jet ; Maj+clic : fiche">{{skill.name}}</button><input class="arkhanval-npc-skill-rank" type="number" value="{{skill.rank}}" data-skill-field="rank" data-skill-archetype="{{skill.archetype}}" data-skill-identifier="{{skill.identifier}}" data-skill-name="{{skill.name}}" data-skill-custom="{{skill.isCustom}}" {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}} aria-label="Rang" {{#unless ../editable}}disabled{{/unless}}></div>
+            {{/each}}
+          </div>
+        </section>
+        <section class="arkhanval-npc-section arkhanval-npc-skill-card">
+          <h3>Autres compétences</h3>
+          <div class="arkhanval-npc-skill-lines">
+            {{#each npc.otherSecond as |skill|}}
+              <div class="arkhanval-npc-skill-row"><button type="button" class="arkhanval-skill-action" data-skill-action data-skill-archetype="{{skill.archetype}}" data-skill-identifier="{{skill.identifier}}" {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}} title="Clic : jet ; Maj+clic : fiche">{{skill.name}}</button><input class="arkhanval-npc-skill-rank" type="number" value="{{skill.rank}}" data-skill-field="rank" data-skill-archetype="{{skill.archetype}}" data-skill-identifier="{{skill.identifier}}" data-skill-name="{{skill.name}}" data-skill-custom="{{skill.isCustom}}" {{#if skill.itemId}}data-item-id="{{skill.itemId}}"{{/if}} aria-label="Rang" {{#unless ../editable}}disabled{{/unless}}></div>
+            {{/each}}
+          </div>
+        </section>
+      </div>
+      <div class="arkhanval-npc-footer">
+        <section class="arkhanval-npc-section"><h3>Spécialités</h3>
+          <div class="arkhanval-npc-section-body arkhanval-npc-specialties">
+            {{#each npc.specialties as |item|}}<button type="button" class="arkhanval-specialty-item" data-item-open data-item-id="{{item.id}}">{{item.name}}</button>{{/each}}
+          </div>
+        </section>
+        <section class="arkhanval-npc-section"><h3>Particularités</h3>
+          <textarea data-npc-notes placeholder="Notes pratiques du PNJ" {{#unless editable}}disabled{{/unless}}>{{npc.notes}}</textarea>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{{/unless}}
