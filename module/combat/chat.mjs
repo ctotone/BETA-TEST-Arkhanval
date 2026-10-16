@@ -2638,7 +2638,8 @@ async function rollSecondaryResistance(message) {
 
   await postResolutionChatMessage(actor, result, {
     arkBoost: request.ark?.boost ?? "",
-    experienceSource: experienceSourceFromRollRequest(actor, request)
+    experienceSource: experienceSourceFromRollRequest(actor, request),
+    actionChainParentMessageId: String(message.id ?? "")
   });
 }
 
@@ -2689,7 +2690,8 @@ async function rollSecondarySkillAction(message) {
   await postResolutionChatMessage(actor, result, {
     arkBoost: request.ark?.boost ?? "",
     experienceSource,
-    combatContext: request.combat ?? null
+    combatContext: request.combat ?? null,
+    actionChainParentMessageId: String(message.id ?? "")
   });
 
   await submitSecondarySkillCompletion(message, { fdUsed: defaultFd });

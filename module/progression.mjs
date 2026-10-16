@@ -1379,9 +1379,12 @@ async function postPrivateIncantationNotice(message, actor, notice) {
   return ChatMessageClass.create({
     speaker: ChatMessageClass.getSpeaker({ actor }),
     whisper: [...new Set(whisper)],
-    flags: { arkhanval: { incantationPrivateNotice: {
-      sourceMessageId: String(message.id), actorId: String(actor.id ?? "")
-    } } },
+    flags: { arkhanval: {
+      actionChainParentMessageId: String(message.id),
+      incantationPrivateNotice: {
+        sourceMessageId: String(message.id), actorId: String(actor.id ?? "")
+      }
+    } },
     content: `<article class="arkhanval-incantation-private-message arkhanval-chat-card arkhanval-chat-card--notice arkhanval-notice-card">
       <header class="arkhanval-notice-card__hero">
         <div class="arkhanval-notice-card__portrait"><img src="${escapeHtml(String(actor?.img ?? "").trim() || "icons/svg/mystery-man.svg")}" alt="${escapeHtml(actor.name)}" loading="lazy"></div>

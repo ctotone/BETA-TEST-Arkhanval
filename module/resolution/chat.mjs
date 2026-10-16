@@ -1185,6 +1185,9 @@ export async function postResolutionChatMessage(actor, result, options = {}) {
   };
 
   const flags = { arkhanval: {} };
+  if (options.actionChainParentMessageId) {
+    flags.arkhanval.actionChainParentMessageId = String(options.actionChainParentMessageId);
+  }
 
   if (experienceSource) {
     flags.arkhanval.experience = {

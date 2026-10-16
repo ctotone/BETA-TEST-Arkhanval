@@ -374,12 +374,7 @@ async function resolveDroppedActor(event) {
 function artCombatRollDisclosure(participant) {
   if (!participant?.result || !qrIsSet(participant.qr)) return "";
   const escape = foundry.utils.escapeHTML;
-  const actualIdentifier = String(participant.result?.plan?.skillIdentifier ?? "");
-  const actualName = String(participant.result?.plan?.skillName ?? "");
-  const sourceNotice = actualIdentifier && actualIdentifier !== ART_COMBAT_IDENTIFIER
-    ? `<section class="arkhanval-resolution-card__info-block"><div class="arkhanval-resolution-card__info-content"><p>Jet utilisé : <strong>${escape(actualName || actualIdentifier)}</strong></p></div></section>`
-    : "";
-  return `${sourceNotice}${combatRollDisclosure(participant.result)}`;
+  return combatRollDisclosure(participant.result);
 }
 
 function actorHasArkCircle(actor) {
@@ -549,7 +544,6 @@ function artCombatParticipantBlock(confrontation, participant) {
         <div class="arkhanval-art-combat-card__action-panel arkhanval-chat-decision-block">
           ${action}
           ${experienceAction}
-          ${!hasQr ? `<small class="arkhanval-chat-action-context">${escape(name)} — En attente du jet</small>` : ""}
         </div>
       ` : ""}
     </article>
@@ -1312,7 +1306,7 @@ export function activateArtCombatChatMessage(message, html) {
     const actorId = String(button.dataset.actorId ?? "");
     const actor = game.actors?.get?.(actorId) ?? null;
     const canUse = Boolean(game.user?.isGM || actor?.testUserPermission?.(game.user, "OWNER"));
-    if (!canUse || actor?.getFlag?.("arkhanval", "viewMode") === "npc") {
+    if (!canUse) {
       button.hidden = true;
       button.disabled = true;
       continue;

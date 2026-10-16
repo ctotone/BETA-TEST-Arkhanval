@@ -1,10 +1,12 @@
 import { ArkhanvalCharacterData } from "./module/data-models/actor/character.mjs";
+import { mountArkhanvalAboutInSettings } from "./module/apps/about.mjs";
 import { ARKHANVAL_ITEM_DATA_MODELS } from "./module/data-models/item/items.mjs";
 import { ArkhanvalCharacterSheet } from "./module/sheets/character-sheet.mjs";
 import { ArkhanvalItemSheet } from "./module/sheets/item-sheet.mjs";
 import { applyDefaultItemImage } from "./module/item-assets.mjs";
 import { activateExperienceChatMessage } from "./module/progression.mjs";
 import { initializeChatProgressionSocket } from "./module/chat-actions.mjs";
+import { prepareArkhanvalActionChain, renderArkhanvalActionChain } from "./module/chat-action-chain.mjs";
 import { activateAdaptiveChatTitles } from "./module/chat-title-fit.mjs";
 import { initializeCreationState } from "./module/creation-wizard.mjs";
 import { activateArkProgressionChatMessage } from "./module/arks.mjs";
@@ -86,7 +88,12 @@ Hooks.on("preCreateItem", (item, data, options, userId) => {
   });
 });
 
+Hooks.on("preCreateChatMessage", (message, data) => {
+  prepareArkhanvalActionChain(message, data);
+});
+
 Hooks.on("renderChatMessageHTML", (message, html) => {
+  renderArkhanvalActionChain(message, html);
   activateExperienceChatMessage(message, html);
   activateCombatChatMessage(message, html);
   activateSpellResolutionChatMessage(message, html);
@@ -94,6 +101,8 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
   activateArkProgressionChatMessage(message, html);
   activateAdaptiveChatTitles(html);
 });
+
+Hooks.on("renderSettings", mountArkhanvalAboutInSettings);
 
 Hooks.on("renderActorDirectory", (application, element) => {
   injectArtCombatActorDirectoryButton(application, element);

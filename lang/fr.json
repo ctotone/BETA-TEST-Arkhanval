@@ -1,5 +1,19 @@
 {
   "ARKHANVAL": {
+    "About": {
+      "SidebarEntry": "À propos d’Arkhanval",
+      "Title": "À propos d’Arkhanval",
+      "Version": "Version :",
+      "Developer": "Développement Foundry :",
+      "CreditsTitle": "Crédits",
+      "Author": "Auteur du jeu :",
+      "Publisher": "Éditeur du jeu :",
+      "Description": "Arkhanval pour Foundry VTT accompagne vos aventures avec des fiches de personnages et de PNJ, des jets, le combat, la magie et la progression.",
+      "GitHub": "Dépôt officiel Arkhanval",
+      "SupportTitle": "Soutenir le développement Foundry",
+      "SupportText": "Ce soutien facultatif concerne uniquement le développement du système Arkhanval pour Foundry VTT par Evilbram. Merci à vous !",
+      "Coffee": "Buy me a coffee"
+    },
     "Sheet": {
       "Character": "Fiche de personnage Arkhanval",
       "Navigation": "Navigation de la fiche Arkhanval",

@@ -1,36 +1,36 @@
-# Arkhanval — BETA 0.9.1
+# Arkhanval — BETA 0.9.2
 
-Système de jeu de rôle Arkhanval pour **Foundry Virtual Tabletop v14**.
-Version **bêta 0.9.1** : fiche PNJ compacte, notes et ajustements. Cette version est destinée aux essais et à la remontée d'anomalies.
+Système de jeu de rôle Arkhanval pour **Foundry VTT v14**.
+Cette version bêta apporte des améliorations d'interface et des liens visuels entre cartes Chat d'une même action.
 
-Consultez `CHANGELOG.md` pour le détail des évolutions.
+Les nouveautés sont détaillées dans le fichier `CHANGELOG.md`.
 
-## Contenu
+## Fonctionnalités et documentation
 
-- Fiches PJ et PNJ (deux présentations d'un même Actor), fiches Item, résolution des actions, progression, Arks, combat, magie et activités longues.
-- Un compendium gratuit **Guides du système de jeu**, contenant les journaux **Guide d'utilisation du système** et **Guide des effets mécaniques**.
-- **Dice So Nice** facultatif.
-- Les effets persistants des sortilèges restent appliqués et suivis manuellement.
+- Fiches PJ et PNJ, compétences, Arks, combat, magie, progression et activités longues.
+- Compendium gratuit **Guides du système de jeu** : *Guide d'utilisation du système* et *Guide des effets mécaniques*.
+- Le module **Dice So Nice** est facultatif.
+- Les effets persistants des sortilèges restent suivis manuellement par le MJ et les joueurs.
 
-## Installation manuelle
+## Installer ou mettre à jour
 
-1. Décompresser l'archive ZIP.
-2. Placer le dossier `arkhanval` dans le répertoire des données utilisateur de Foundry VTT : `Data/systems/`.
-3. Redémarrer Foundry VTT et créer un monde utilisant le système **Arkhanval**.
+### Installation par manifeste (après publication)
 
-Une fois la release GitHub 0.9.1 publiée et ses liens vérifiés, l'installation via URL de manifeste pourra être utilisée :
+Dans Foundry VTT v14, utiliser cette URL dans l'installation des systèmes :
 `https://raw.githubusercontent.com/ctotone/BETA-TEST-Arkhanval/main/system.json`
 
-Avant cette publication, cette URL n'est pas garantie opérationnelle. Vérifiez également les conditions de sauvegarde de vos mondes avant une mise à jour.
+**Important :** l'adresse ne doit être utilisée que lorsque le manifeste et la Release 0.9.2 ont été publiés et que le lien `download` est fonctionnel.
 
-## Signalement des bugs
+### Installation manuelle
 
-Ouvrir une Issue sur le dépôt bêta :
+Décompresser `arkhanval.zip` : placer le dossier `arkhanval` dans `Data/systems/` de l'espace de données utilisateur Foundry, puis redémarrer. Sauvegarder votre monde avant toute mise à jour.
+
+## Signaler un problème
+
+Déposer une Issue avec la version Foundry, la version Arkhanval, la procédure de reproduction et les résultats attendus/observés :
 https://github.com/ctotone/BETA-TEST-Arkhanval/issues
-
-Merci d'indiquer les versions d'Arkhanval et de Foundry, la marche à suivre pour reproduire le problème, ainsi que le comportement attendu et observé.
 
 ## Droits, licences et crédits
 
-Les notices OFL des polices distribuées se trouvent dans `assets/fonts/`.
-Les droits et attributions relatifs au système, au code, aux illustrations et aux contenus Arkhanval doivent être confirmés avec leurs ayants droit avant diffusion publique. Ce README ne constitue pas une licence générale de réutilisation.
+Les notices de licence des polices incluses sont conservées dans `assets/fonts/`.
+Les droits et crédits de redistribution du code, des textes et des illustrations doivent être validés auprès des ayants droit avant publication ; la disponibilité du ZIP ne vaut pas autorisation générale de réutilisation.

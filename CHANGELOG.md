@@ -2,6 +2,18 @@
 
 Ce document présente les évolutions du système Arkhanval pour Foundry Virtual Tabletop. Il récapitule les changements visibles pour les joueurs et les maîtres du jeu.
 
+## [0.9.2] — Cartes Chat et ergonomie
+
+### Nouveautés
+
+- **Fenêtre « À propos d'Arkhanval » :** accès aux informations de présentation, aux crédits, aux liens du projet et au soutien facultatif.
+- **Repérage des actions dans le Chat :** liserés de couleur pour distinguer les messages appartenant à une même chaîne d'action, lorsque la relation entre les messages est explicitement connue. Cela concerne notamment des enchaînements de combat, d'incantation et certains rappels ou résultats d'Ark et d'expérience ; les messages sans lien identifiable restent indépendants.
+
+### Améliorations
+
+- **Cartes Chat plus compactes :** présentation resserrée des en-têtes, résultats QR, dégâts, cartes de sortilèges et Art du combat pour faciliter la lecture.
+- **Art du combat des PNJ :** le bouton de jet n'est plus masqué du seul fait de la présentation PNJ ; les contrôles d'autorisation et l'exclusion des gains d'XP PNJ sont conservés.
+
 ## [0.9.1] — Fiche PNJ et améliorations des personnages
 
 ### Nouveautés
